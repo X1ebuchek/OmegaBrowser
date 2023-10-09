@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using Browser.Management;
+using HtmlAgilityPack;
 namespace Browser;
 
 class Program

@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using Browser.Management;
 
 namespace Browser.Networking;
 
@@ -16,7 +17,7 @@ public class ResourceManager
 
     
 
-    private static void DownloadResource(string url, string path)
+    private static bool DownloadResource(string url, string path)
     {
         using var client = new HttpClient();
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -26,15 +27,17 @@ public class ResourceManager
         {
             using var fs = new FileStream(path, FileMode.OpenOrCreate);
             response.Content.CopyToAsync(fs);
+            return true;
         }
         else
         {
-            throw new Exception("Bad Url");
+            //Console.Error.WriteLine($"Bad Url: {url}"); //todo include in logger
+            return false;
         }
         
     }
 
-    public string GetResource(string url)
+    public bool GetResource(string url, out string fileName)
     {
         var myUri = new Uri(url);
         var host = myUri.Host;
@@ -45,15 +48,22 @@ public class ResourceManager
             _data.Add(host, new Dictionary<string, string>());
         }
 
-        _data[host].TryGetValue(path, out var fileName);
+        _data[host].TryGetValue(path, out fileName);
 
-        if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName)) return fileName;
+        if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName)) return true;
         
         fileName = Path.Combine(_dataPath, $"{host}__{Util.ComputeHash(path)}");
-        DownloadResource(url, fileName);
-        _data[host].Add(path, fileName);
+        if (DownloadResource(url, fileName))
+        {
+            _data[host].Add(path, fileName);
+            return true;
+        }
+        else
+        {
+            fileName = null;
+            return false;
+        }
         
-        return fileName;
     }
 
     public void ClearCacheByDomain(string domain)
