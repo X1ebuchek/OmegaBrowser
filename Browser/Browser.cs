@@ -9,7 +9,7 @@ namespace Browser;
 public class Browser //todo tab manager
 {
 
-    private ResourceManager _resourceManager;
+    public ResourceManager resourceManager { get; private set; }
     private List<Command> TabCommands; //todo command manager
     public Tab currentTab { get; private set; }
 
@@ -27,7 +27,7 @@ public class Browser //todo tab manager
 
         var rmPath = Path.Combine(baseDirectory, "resources");
         Directory.CreateDirectory(rmPath);
-        _resourceManager = new ResourceManager(rmPath);
+        resourceManager = new ResourceManager(rmPath);
         
         InitCommands();
     }
@@ -37,7 +37,8 @@ public class Browser //todo tab manager
         TabCommands = new List<Command>
         {
             new PrintTreeCommand(this),
-            new PrintResourcesCommand(this)
+            new PrintResourcesCommand(this),
+            new DownloadResources(this)
         };
     }
     
@@ -79,11 +80,13 @@ public class Browser //todo tab manager
     {
         try
         {
-            var file = _resourceManager.GetResource(url);
+            var result = resourceManager.GetResource(url, out var file);
+            if (!result) throw new Exception();
+            
             var doc = new HtmlDocument();
             doc.Load(file);
 
-            var tab = new Tab(url, Util.GetResources(doc), doc);
+            var tab = new Tab(url, Util.FillResourcesWithLocation(Util.GetResources(doc), url), doc);
 
             return tab;
         }

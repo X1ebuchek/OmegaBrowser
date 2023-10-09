@@ -39,8 +39,40 @@ public class Util
         result.AddRange(
             from style in root.SelectNodes("//link[@rel='stylesheet']")
             from styleAttribute in style.Attributes 
-            where styleAttribute.Name == "href" select styleAttribute.Value
+            where styleAttribute.Name == "href"
+            select styleAttribute.Value
             );
+
+        return result;
+    }
+
+    public static List<string> FillResourcesWithLocation(List<string> res, string location)
+    { //todo process relative path too
+        
+        var uri = new Uri(location);
+        string host;
+        
+        if (string.IsNullOrEmpty(uri.UserInfo))
+        {
+            host = $"{uri.Scheme}://{uri.Host}";
+        }
+        else
+        {
+            host = $"{uri.Scheme}://{uri.UserInfo}@{uri.Host}";
+        }
+        
+        var result = new List<string>();
+        foreach (var resource in res)
+        {
+            if (resource.StartsWith("/"))
+            {
+                result.Add(host + resource);
+            }
+            else
+            {
+                result.Add(resource);
+            }
+        }
 
         return result;
     }
