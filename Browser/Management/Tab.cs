@@ -6,16 +6,16 @@ public class Tab
 {
     public string location { get; }
     public HtmlDocument document { get; }
-    public List<string> resources { get; }
+    public HashSet<string> resources { get; }
 
     public Tab(string location, HtmlDocument document)
     {
         this.location = location;
         this.document = document;
-        resources = new List<string>();
+        resources = new HashSet<string>();
     }
 
-    public Tab(string location, List<string> resources, HtmlDocument document)
+    public Tab(string location, HashSet<string> resources, HtmlDocument document)
     {
         this.resources = resources;
         this.document = document;

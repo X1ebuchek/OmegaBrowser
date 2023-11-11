@@ -6,9 +6,11 @@ public class PrintResourcesCommand : Command
 
     public override void Execute()
     {
-        for (var i = 0; i < Browser.currentTab.resources.Count; i++)
+        var counter = 0;
+        foreach (var res in Browser.currentTab.resources)
         {
-            Console.WriteLine($"{i+1}) {Browser.currentTab.resources[i]}");
+            Console.WriteLine($"{counter+1}) {res}");
+            counter++;
         }
     }
 }
