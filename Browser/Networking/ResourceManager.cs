@@ -20,18 +20,26 @@ public class ResourceManager
     private static bool DownloadResource(string url, string path)
     {
         using var client = new HttpClient();
-        using var request = new HttpRequestMessage(HttpMethod.Get, url);
-        using var response = client.Send(request);
 
-        if (response.IsSuccessStatusCode)
+        try
         {
-            using var fs = new FileStream(path, FileMode.OpenOrCreate);
-            response.Content.CopyToAsync(fs);
-            return true;
+            var response = client.GetAsync(url).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                using var fs = new FileStream(path, FileMode.OpenOrCreate);
+                response.Content.CopyToAsync(fs).Wait();
+                return true;
+            }
+            else
+            {
+                Console.Error.WriteLine($"Bad Url: {url}"); //todo include in logger
+                return false;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            //Console.Error.WriteLine($"Bad Url: {url}"); //todo include in logger
+            Console.Error.WriteLine($"Exception while downloading {url}: {ex.Message}");
             return false;
         }
         
@@ -41,7 +49,7 @@ public class ResourceManager
     {
         var myUri = new Uri(url);
         var host = myUri.Host;
-        var path = myUri.AbsolutePath;
+        var path = myUri.AbsoluteUri;
 
         if (!_data.ContainsKey(host))
         {
@@ -55,7 +63,14 @@ public class ResourceManager
         fileName = Path.Combine(_dataPath, $"{host}__{Util.ComputeHash(path)}");
         if (DownloadResource(url, fileName))
         {
-            _data[host].Add(path, fileName);
+            if (!_data[host].ContainsKey(path))
+            {
+                _data[host].Add(path, fileName);
+            }
+            else
+            {
+                _data[host][path] = fileName;
+            }
             return true;
         }
         else
@@ -66,8 +81,10 @@ public class ResourceManager
         
     }
 
-    public void ClearCacheByDomain(string domain)
+    public void ClearCacheByUrl(string url)
     {
-        _data[domain] = new Dictionary<string, string>();
+        var myUri = new Uri(url);
+        var host = myUri.Host;
+        _data[host] = new Dictionary<string, string>();
     }
 }

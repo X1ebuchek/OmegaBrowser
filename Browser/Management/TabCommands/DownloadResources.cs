@@ -8,7 +8,7 @@ public class DownloadResources : Command
         foreach (var resource in Browser.currentTab.resources)
         {
             var res = Browser.resourceManager.GetResource(resource, out var unused);
-            Console.WriteLine(res ? $"[Done]: {resource}" : $"[Error]: {resource}");
+            Console.WriteLine(res ? $"[Done]: {resource} -> {unused}" : $"[Error]: {resource}");
         }
     }
 }

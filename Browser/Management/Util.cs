@@ -46,7 +46,7 @@ public class Util
         return result;
     }
 
-    public static List<string> FillResourcesWithLocation(List<string> res, string location)
+    public static HashSet<string> FillResourcesWithLocation(List<string> res, string location)
     { //todo process relative path too
         
         var uri = new Uri(location);
@@ -61,7 +61,7 @@ public class Util
             host = $"{uri.Scheme}://{uri.UserInfo}@{uri.Host}";
         }
         
-        var result = new List<string>();
+        var result = new HashSet<string>();
         foreach (var resource in res)
         {
             if (resource.StartsWith("/"))

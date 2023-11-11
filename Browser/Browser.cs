@@ -38,7 +38,8 @@ public class Browser //todo tab manager
         {
             new PrintTreeCommand(this),
             new PrintResourcesCommand(this),
-            new DownloadResources(this)
+            new DownloadResources(this),
+            new ClearResourcesCommand(this)
         };
     }
     
