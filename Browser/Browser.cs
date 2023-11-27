@@ -50,28 +50,38 @@ public class Browser //todo tab manager
         var url = Console.ReadLine();
 
         currentTab = LoadTab(url);
-
-        var userInput = "";
         
         Console.WriteLine("What should I do? I can:");
         foreach (var command in TabCommands)
         {
             Console.WriteLine($"- {command.name}");
         }
-        
-        while (!string.Equals(userInput, "quit", StringComparison.Ordinal))
+
+        string userInput;
+        do
         {
-            
             Console.Write(">>> ");
             userInput = Console.ReadLine();
-
-            foreach (var command in TabCommands.Where(command => command.name.Equals(userInput)))
-            {
-                command.Execute();
-                break;
-            }
             
-        }
+            var commands = TabCommands.Where(command => command.name.Equals(userInput));
+            var enumerable = commands as Command[] ?? commands.ToArray();
+            if (!enumerable.Any())
+            {
+                Console.WriteLine("Unknown command. I can:");
+                foreach (var command in TabCommands)
+                {
+                    Console.WriteLine($"- {command.name}");
+                }
+            }
+            else
+            {
+                foreach (var command in enumerable)
+                {
+                    command.Execute();
+                    break;
+                }
+            }
+        } while (!string.Equals(userInput, "quit", StringComparison.Ordinal));
         
         Console.WriteLine("Shutdown...");
 

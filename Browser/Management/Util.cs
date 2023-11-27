@@ -42,6 +42,13 @@ public class Util
             where styleAttribute.Name == "href"
             select styleAttribute.Value
             );
+        
+        result.AddRange(
+            from img in root.SelectNodes("//img") 
+            from imgAttribute in img.Attributes
+            where imgAttribute.Name == "src"
+            select imgAttribute.Value
+            );
 
         return result;
     }
