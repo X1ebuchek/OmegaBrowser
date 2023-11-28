@@ -103,6 +103,7 @@ public class Browser //todo tab manager
         }
         catch (Exception e)
         {
+            Console.WriteLine(e);
             throw new Exception("Error on loading page");
         }
     }

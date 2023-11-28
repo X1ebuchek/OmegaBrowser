@@ -1,4 +1,5 @@
-﻿using Browser.Management;
+﻿using Browser.CSS;
+using Browser.Management;
 using HtmlAgilityPack;
 namespace Browser;
 
@@ -50,22 +51,25 @@ class Program
     
     static void DoLocal()
     {
-        WorkingPath = new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.ToString();
-        
-        var filename = "fortesting.html";
-        var path = Path.Combine(WorkingPath, "html", filename);
-        
-        HtmlDocument doc = new HtmlDocument();
-        doc.Load(path);
-        Util.RecursiveHtmlNodePrint(doc.DocumentNode);
-        
-        var allNodes = doc.DocumentNode.ChildNodes;
-        
-        allNodes.FindFirst("div").AppendChild(HtmlNode.CreateNode("<img src='test.jpg' />"));
-        
-        Util.RecursiveHtmlNodePrint(doc.DocumentNode);
+        // WorkingPath = new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.ToString();
+        //
+        // var filename = "fortesting.html";
+        // var path = Path.Combine(WorkingPath, "html", filename);
+        //
+        // HtmlDocument doc = new HtmlDocument();
+        // doc.Load(path);
+        // Util.RecursiveHtmlNodePrint(doc.DocumentNode);
+        //
+        // var allNodes = doc.DocumentNode.ChildNodes;
+        //
+        // allNodes.FindFirst("div").AppendChild(HtmlNode.CreateNode("<img src='test.jpg' />"));
+        //
+        // Util.RecursiveHtmlNodePrint(doc.DocumentNode);
+        CssParser.Parse(
+            @"C:\Users\vagae\RiderProjects\OmegaBrowser\Browser\bin\Debug\net7.0\resources\se.ifmo.ru__6gu2AbGMyNUXYmwDWFt_Q78EK5ZRFXbBLhA-YyPtfGs");
 
-        
+
+
     }
     
     [Obsolete] static void DoEnter()
