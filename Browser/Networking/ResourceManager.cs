@@ -13,9 +13,6 @@ public class ResourceManager
         this._dataPath = dataPath;
     }
     
-    private Dictionary<string, Dictionary<string, string>> _data = new();
-
-    
 
     private static bool DownloadResource(string url, string path)
     {
@@ -45,46 +42,38 @@ public class ResourceManager
         
     }
 
-    public bool GetResource(string url, out string fileName)
+    public bool GetResource(ref Resource resource)
     {
-        var myUri = new Uri(url);
+        var myUri = new Uri(resource.path);
         var host = myUri.Host;
         var path = myUri.AbsoluteUri;
 
-        if (!_data.ContainsKey(host))
-        {
-            _data.Add(host, new Dictionary<string, string>());
-        }
-
-        _data[host].TryGetValue(path, out fileName);
+        var fileName = resource.localPath;
 
         if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName)) return true;
         
         fileName = Path.Combine(_dataPath, $"{host}__{Util.ComputeHash(path)}");
-        if (DownloadResource(url, fileName))
+        if (DownloadResource(resource.path, fileName))
         {
-            if (!_data[host].ContainsKey(path))
-            {
-                _data[host].Add(path, fileName);
-            }
-            else
-            {
-                _data[host][path] = fileName;
-            }
+            resource.localPath = fileName;
             return true;
         }
         else
         {
-            fileName = null;
+            resource.localPath = null;
             return false;
         }
         
     }
 
-    public void ClearCacheByUrl(string url)
+    public void ClearCacheByTab(List<Resource> resources)
     {
-        var myUri = new Uri(url);
-        var host = myUri.Host;
-        _data[host] = new Dictionary<string, string>();
+        foreach (var resource in resources)
+        {
+            if (resource.localPath != null && File.Exists(resource.localPath))
+            {
+                File.Delete(resource.localPath);
+            }
+        }
     }
 }

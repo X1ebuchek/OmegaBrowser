@@ -6,6 +6,6 @@ public class ClearResourcesCommand : Command
 
     public override void Execute()
     {
-        Browser.resourceManager.ClearCacheByUrl(Browser.currentTab.location);
+        Browser.resourceManager.ClearCacheByTab(Browser.currentTab.resources);
     }
 }

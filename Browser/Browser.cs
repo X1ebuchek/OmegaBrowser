@@ -92,11 +92,12 @@ public class Browser //todo tab manager
     {
         try
         {
-            var result = resourceManager.GetResource(url, out var file);
-            if (!result) throw new Exception();
+            var res = new Resource(url, Resource.ResourceType.Html);
+            var result = resourceManager.GetResource(ref res);
+            if (!result) throw new Exception("Error on loading first page!");
             
             var doc = new CssHtmlDocument();
-            doc.Load(file);
+            doc.Load(res.localPath);
 
             return new Tab(url, Util.FillResourcesWithLocation(Util.GetResources(doc), url), doc);
         }

@@ -1,3 +1,4 @@
+using Browser.Networking;
 using HtmlAgilityPack;
 
 namespace Browser.Management;
@@ -6,24 +7,19 @@ public class Tab
 {
     public string location { get; }
     public HtmlDocument document { get; }
-    public HashSet<string> resources { get; }
+    public List<Resource> resources { get; set; }
 
     public Tab(string location, HtmlDocument document)
     {
         this.location = location;
         this.document = document;
-        resources = new HashSet<string>();
+        resources = new List<Resource>();
     }
 
-    public Tab(string location, HashSet<string> resources, HtmlDocument document)
+    public Tab(string location, List<Resource> resources, HtmlDocument document)
     {
         this.resources = resources;
         this.document = document;
         this.location = location;
-    }
-
-    public void AddResource(string res)
-    {
-        resources.Add(res);
     }
 }
