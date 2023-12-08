@@ -1,4 +1,5 @@
 using System.Collections;
+using Browser.DOM;
 using Browser.Management;
 using Browser.Management.TabCommands;
 using Browser.Networking;
@@ -94,12 +95,10 @@ public class Browser //todo tab manager
             var result = resourceManager.GetResource(url, out var file);
             if (!result) throw new Exception();
             
-            var doc = new HtmlDocument();
+            var doc = new CssHtmlDocument();
             doc.Load(file);
 
-            var tab = new Tab(url, Util.FillResourcesWithLocation(Util.GetResources(doc), url), doc);
-
-            return tab;
+            return new Tab(url, Util.FillResourcesWithLocation(Util.GetResources(doc), url), doc);
         }
         catch (Exception e)
         {
