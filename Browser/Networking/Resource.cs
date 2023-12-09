@@ -19,6 +19,6 @@ public class Resource
 
     public override string ToString()
     {
-        return $"{type}, {path}";
+        return $"{type}, {path}" + (string.IsNullOrEmpty(localPath) ? "" : $", {localPath}");
     }
 }

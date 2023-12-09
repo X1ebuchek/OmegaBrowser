@@ -4,23 +4,23 @@ namespace Browser.CSS;
 
 public class CssParser
 {
-    public static CSSGlobalMap Parse(string CSS, bool isPath = true)
+    public static CSSGlobalMap ParseString(string cssString)
     {
-        string path = CSS;
+        byte[] byteArray = Encoding.UTF8.GetBytes(cssString);
+        MemoryStream stream = new MemoryStream(byteArray);
+        StreamReader sr = new StreamReader(stream);
+        return Parse(sr);
+    }
+    
+    public static CSSGlobalMap ParseFile(string path)
+    {
+        StreamReader sr = File.OpenText(path);
+        return Parse(sr);
+    }
+    
+    private static CSSGlobalMap Parse(StreamReader sr)
+    {
         CSSGlobalMap globalMap = new CSSGlobalMap();
-
-        StreamReader sr;
-        if (isPath)
-        {
-            sr = File.OpenText(path);
-        }
-        else
-        {
-            byte[] byteArray = Encoding.UTF8.GetBytes(CSS);
-            MemoryStream stream = new MemoryStream(byteArray);
-            sr = new StreamReader(stream);
-        }
-        
         
         while (sr.Peek() != -1)
         {

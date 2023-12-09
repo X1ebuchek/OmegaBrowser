@@ -1,3 +1,4 @@
+using Browser.DOM;
 using Browser.Networking;
 using HtmlAgilityPack;
 
@@ -8,18 +9,25 @@ public class Tab
     public string location { get; }
     public HtmlDocument document { get; }
     public List<Resource> resources { get; set; }
+    public Resource mainResource { get; }
+    public Browser owner { get; }
 
-    public Tab(string location, HtmlDocument document)
+    public Tab(Resource mainResource, Browser owner)
     {
-        this.location = location;
-        this.document = document;
-        resources = new List<Resource>();
-    }
+        this.mainResource = mainResource;
+        this.owner = owner;
 
-    public Tab(string location, List<Resource> resources, HtmlDocument document)
-    {
-        this.resources = resources;
-        this.document = document;
-        this.location = location;
+        location = mainResource.path;
+
+        document = new CssHtmlDocument();
+        document.Load(mainResource.localPath);
+
+        resources = ResourceUtil.FillResourcesWithLocation(ResourceUtil.GetResources(document), location);
+        foreach (var t in resources)
+        {
+            var resource = t;
+            owner.resourceManager.GetResource(ref resource);
+        }
+        
     }
 }

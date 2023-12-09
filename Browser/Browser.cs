@@ -1,9 +1,6 @@
-using System.Collections;
-using Browser.DOM;
 using Browser.Management;
 using Browser.Management.TabCommands;
 using Browser.Networking;
-using HtmlAgilityPack;
 
 namespace Browser;
 
@@ -88,18 +85,19 @@ public class Browser //todo tab manager
 
     }
 
-    private Tab? LoadTab(string url)
+    private Tab LoadTab(string url)
     {
         try
         {
+            if (!Uri.TryCreate(url, UriKind.Absolute, out _))
+            {
+                url = "https://" + url;
+            }
             var res = new Resource(url, Resource.ResourceType.Html);
             var result = resourceManager.GetResource(ref res);
-            if (!result) throw new Exception("Error on loading first page!");
-            
-            var doc = new CssHtmlDocument();
-            doc.Load(res.localPath);
+            if (!result) throw new Exception();
 
-            return new Tab(url, Util.FillResourcesWithLocation(Util.GetResources(doc), url), doc);
+            return new Tab(res, this);
         }
         catch (Exception e)
         {

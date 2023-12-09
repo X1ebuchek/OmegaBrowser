@@ -1,15 +1,15 @@
 ﻿using Browser.CSS;
 using Browser.Management;
 using HtmlAgilityPack;
+
 namespace Browser;
 
 class Program
 {
     private static string WorkingPath;
-    
+
     static void Main(string[] args)
     {
-
         if (args.Length == 0)
         {
             Console.WriteLine("Booting Browser");
@@ -22,33 +22,32 @@ class Program
                 case "debug":
                     DoLocal();
                     break;
-            
+
                 case "browser":
                     BootBrowser();
                     break;
-            
+
                 default:
                     Console.Error.WriteLine("Please, provide boot options ('debug' or 'browser')");
                     break;
             }
         }
-        
     }
 
 
     static void BootBrowser()
     {
         WorkingPath = Directory.GetCurrentDirectory();
-                
+
         var opts = new Browser.BrowserOptions
         {
             baseDirectory = WorkingPath
         };
-                
+
         var browser = new Browser(opts);
         browser.Run();
     }
-    
+
     static void DoLocal()
     {
         // WorkingPath = new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.ToString();
@@ -65,26 +64,25 @@ class Program
         // allNodes.FindFirst("div").AppendChild(HtmlNode.CreateNode("<img src='test.jpg' />"));
         //
         // Util.RecursiveHtmlNodePrint(doc.DocumentNode);
-        CssParser.Parse(
-            @"C:\Users\vagae\RiderProjects\OmegaBrowser\Browser\bin\Debug\net7.0\resources\se.ifmo.ru__6gu2AbGMyNUXYmwDWFt_Q78EK5ZRFXbBLhA-YyPtfGs");
-
-
-
+        CssParser.ParseFile(
+            @"C:\Users\vagae\RiderProjects\OmegaBrowser\Browser\bin\Debug\net7.0\resources\se.ifmo.ru__6gu2AbGMyNUXYmwDWFt_Q78EK5ZRFXbBLhA-YyPtfGs"
+        );
     }
-    
-    [Obsolete] static void DoEnter()
+
+    [Obsolete]
+    static void DoEnter()
     {
         String url = Console.ReadLine();
-        
+
         // Создаем новый объект HtmlDocument
         //HtmlDocument doc = new HtmlDocument();
 
         // Загружаем HTML в HtmlDocument
         var web = new HtmlWeb();
         var doc = web.Load(url);
-        
+
         Directory.CreateDirectory(WorkingPath + "html");
-        
+
         File.WriteAllText(WorkingPath + "/site.html", doc.ParsedText);
 
         // Получаем все элементы DOM на странице
@@ -100,10 +98,8 @@ class Program
                 foreach (var attr in node1.Attributes)
                 {
                     Console.WriteLine(attr.Name + " = " + attr.Value);
-                    
                 }
             }
         }
     }
 }
-

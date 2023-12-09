@@ -1,7 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
-using Browser.Management;
-
 namespace Browser.Networking;
 
 public class ResourceManager
@@ -12,7 +8,7 @@ public class ResourceManager
     {
         this._dataPath = dataPath;
     }
-    
+
 
     private static bool DownloadResource(string url, string path)
     {
@@ -39,7 +35,6 @@ public class ResourceManager
             Console.Error.WriteLine($"Exception while downloading {url}: {ex.Message}");
             return false;
         }
-        
     }
 
     public bool GetResource(ref Resource resource)
@@ -51,8 +46,8 @@ public class ResourceManager
         var fileName = resource.localPath;
 
         if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName)) return true;
-        
-        fileName = Path.Combine(_dataPath, $"{host}__{Util.ComputeHash(path)}");
+
+        fileName = Path.Combine(_dataPath, $"{host}__{ResourceUtil.ComputeHash(path)}");
         if (DownloadResource(resource.path, fileName))
         {
             resource.localPath = fileName;
@@ -63,7 +58,6 @@ public class ResourceManager
             resource.localPath = null;
             return false;
         }
-        
     }
 
     public void ClearCacheByTab(List<Resource> resources)
