@@ -35,6 +35,7 @@ public class Browser //todo tab manager
         TabCommands = new List<Command>
         {
             new PrintTreeCommand(this),
+            new PrintCssTreeCommand(this),
             new PrintResourcesCommand(this),
             new DownloadResources(this),
             new ClearResourcesCommand(this)

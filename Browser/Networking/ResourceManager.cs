@@ -39,7 +39,16 @@ public class ResourceManager
 
     public bool GetResource(ref Resource resource)
     {
-        var myUri = new Uri(resource.path);
+        Uri myUri;
+        if (resource.path.StartsWith("/"))
+        {
+            myUri = new Uri(resource.host + resource.path);
+        }
+        else
+        {
+            myUri = new Uri(resource.path);
+        }
+
         var host = myUri.Host;
         var path = myUri.AbsoluteUri;
 
@@ -48,7 +57,7 @@ public class ResourceManager
         if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName)) return true;
 
         fileName = Path.Combine(_dataPath, $"{host}__{ResourceUtil.ComputeHash(path)}");
-        if (DownloadResource(resource.path, fileName))
+        if (DownloadResource(path, fileName))
         {
             resource.localPath = fileName;
             return true;

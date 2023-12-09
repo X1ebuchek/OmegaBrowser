@@ -17,6 +17,27 @@ public class CssParser
         StreamReader sr = File.OpenText(path);
         return Parse(sr);
     }
+
+    public static CSSAttrMap ParseInline(string cssString)
+    {
+
+        var map = new CSSAttrMap(); 
+        
+        foreach (var attr in cssString.Split(";"))
+        {
+            var kv = attr.Split(":");
+            try
+            {
+                map.getMap()[kv[0].Trim()] = kv[1].Trim();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        return map;
+    }
     
     private static CSSGlobalMap Parse(StreamReader sr)
     {
@@ -208,14 +229,14 @@ public class CssParser
         }
 
 
-        foreach (var global in globalMap.getMap())
-        {
-            Console.WriteLine(global.Key + ": ");
-            foreach (var map in global.Value.getMap())
-            {
-                Console.WriteLine("\t" + map.Key + " : " + map.Value);
-            }
-        }
+        // foreach (var global in globalMap.getMap())
+        // {
+        //     Console.WriteLine(global.Key + ": ");
+        //     foreach (var map in global.Value.getMap())
+        //     {
+        //         Console.WriteLine("\t" + map.Key + " : " + map.Value);
+        //     }
+        // }
 
         return globalMap;
     }

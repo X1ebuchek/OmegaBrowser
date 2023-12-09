@@ -87,17 +87,8 @@ public class ResourceUtil
             var result = new List<Resource>();
             foreach (var resource in res)
             {
-                if (resource.path.StartsWith("/"))
-                {
-                    resource.path = host + resource.path;
-                    result.Add(resource);
-                }
-                else
-                {
-                    result.Add(resource);
-                }
-
-                resource.host = uri.Host;
+                resource.host = host;
+                result.Add(resource);
             }
 
             return result;
