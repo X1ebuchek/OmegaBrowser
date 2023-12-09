@@ -60,6 +60,11 @@ public class Tab
                 else
                 {
                     var cssString = node.InnerText;
+                    cssString = cssString.Trim();
+                    if (cssString.Equals(""))
+                    {
+                        continue;
+                    }
                     map = CssParser.ParseString(cssString);
                 }
                 

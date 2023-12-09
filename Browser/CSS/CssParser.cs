@@ -6,7 +6,7 @@ public class CssParser
 {
     public static CSSGlobalMap ParseString(string cssString)
     {
-        byte[] byteArray = Encoding.UTF8.GetBytes(cssString);
+        byte[] byteArray = Encoding.UTF8.GetBytes(cssString.Trim());
         MemoryStream stream = new MemoryStream(byteArray);
         StreamReader sr = new StreamReader(stream);
         return Parse(sr);
@@ -43,7 +43,7 @@ public class CssParser
     {
         CSSGlobalMap globalMap = new CSSGlobalMap();
         
-        while (sr.Peek() != -1)
+        r:while (sr.Peek() != -1)
         {
             char c;
             string key = "";
@@ -79,7 +79,8 @@ public class CssParser
                         }
                     }
 
-                    continue;
+                    goto r;
+                    //continue;
                 }
 
                 if (c == '/' && (char)sr.Peek() == '*')
@@ -98,6 +99,7 @@ public class CssParser
             }
 
 
+            //Console.WriteLine("key: " + key);
             c = (char)sr.Read();
             CSSAttrMap cssAttrMap = new CSSAttrMap();
             while (sr.Peek() != '}')
@@ -158,7 +160,7 @@ public class CssParser
 
                 if (c == ':')
                 {
-                    while ((char)sr.Peek() != '{' && (char)sr.Peek() != ';')
+                    while ((char)sr.Peek() != '{' && (char)sr.Peek() != ';' && (char)sr.Peek() != '}')
                     {
                         c = (char)sr.Read();
                         if (c == '/' && (char)sr.Peek() == '*')
@@ -178,6 +180,11 @@ public class CssParser
                 }
 
                 c = (char)sr.Read();
+                if (c == '}')
+                {
+                    cssAttrMap.getMap().Add(keyAttr.Trim(), valueAttr.Trim());
+                    goto cancelLoop;
+                }
 
                 if (c == '{')
                 {
