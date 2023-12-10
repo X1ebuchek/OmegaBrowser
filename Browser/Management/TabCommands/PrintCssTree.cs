@@ -9,7 +9,7 @@ public class PrintCssTreeCommand : Command
     public override void Execute()
     {
         Browser.currentTab.HandleCss();
-        Util.RecursiveCssHtmlNodePrint((CssHtmlNode)Browser.currentTab.document.DocumentNode);
+        Util.RecursiveCssHtmlNodePrint(Browser.currentTab.document.DocumentNode, Browser.currentTab.cssDocument);
     }
 
 }

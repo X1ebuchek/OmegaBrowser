@@ -9,6 +9,7 @@ public class Tab
 {
     public string location { get; }
     public HtmlDocument document { get; }
+    public CssHtmlDocument cssDocument { get; }
     public List<Resource> resources { get; set; }
     public Resource mainResource { get; }
     public Browser owner { get; }
@@ -20,8 +21,10 @@ public class Tab
 
         location = mainResource.path;
 
-        document = new CssHtmlDocument();
+        document = new HtmlDocument();
         document.Load(mainResource.localPath);
+
+        cssDocument = new CssHtmlDocument(document);
 
         resources = ResourceUtil.FillResourcesWithLocation(ResourceUtil.GetResources(document), location);
         foreach (var t in resources)
@@ -94,17 +97,9 @@ public class Tab
 
                     foreach (var selectedNode in selectedNodes)
                     {
-                        try
+                        foreach (var attrKvp in kvp.Value.getMap())
                         {
-                            var cssSelectedNode = (CssHtmlNode)selectedNode;
-                            foreach (var attrKvp in kvp.Value.getMap())
-                            {
-                                cssSelectedNode.cssAttrMap.getMap()[attrKvp.Key] = attrKvp.Value;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            //ignored
+                            cssDocument.GetMap()[selectedNode].getMap()[attrKvp.Key] = attrKvp.Value;
                         }
                     }
                 }
@@ -122,20 +117,11 @@ public class Tab
             foreach (var attribute in node.Attributes)
             {
                 if (!attribute.Name.Equals("style")) continue;
-                var style = attribute.Value;
-                try
-                {
-                    var cssNode = (CssHtmlNode)node;
-                    var map = CssParser.ParseInline(style);
+                var map = CssParser.ParseInline(attribute.Value);
 
-                    foreach (var kvp in map.getMap())
-                    {
-                        cssNode.cssAttrMap.getMap()[kvp.Key] = kvp.Value;
-                    }
-                }
-                catch (Exception)
+                foreach (var kvp in map.getMap())
                 {
-                    //ignored
+                    cssDocument.GetMap()[node].getMap()[kvp.Key] = kvp.Value;
                 }
             }
             

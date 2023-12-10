@@ -19,17 +19,17 @@ public class Util
         }
     }
     
-    public static void RecursiveCssHtmlNodePrint(CssHtmlNode node, string indentation = "")
+    public static void RecursiveCssHtmlNodePrint(HtmlNode node, CssHtmlDocument document, string indentation = "")
     {
         Console.WriteLine($"{indentation}{node.Name}");
-        foreach (var nodeAttribute in node.cssAttrMap.getMap())
+        foreach (var nodeAttribute in document.GetMap()[node].getMap())
         {
             Console.WriteLine($"{indentation} -{nodeAttribute.Key}:{nodeAttribute.Value}");
         }
 
         foreach (var child in node.ChildNodes)
         {
-            RecursiveHtmlNodePrint(child, indentation + "  ");
+            RecursiveCssHtmlNodePrint(child, document, indentation + "  ");
         }
     }
 
