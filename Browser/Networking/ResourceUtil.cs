@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using HtmlAgilityPack;
+using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace Browser.Networking;
 

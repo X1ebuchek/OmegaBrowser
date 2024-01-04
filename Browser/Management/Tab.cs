@@ -3,6 +3,7 @@ using Browser.DOM;
 using Browser.Networking;
 using Browser.Render;
 using HtmlAgilityPack;
+using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace Browser.Management;
 
@@ -32,16 +33,25 @@ public class Tab
         foreach (var t in resources)
         {
             var resource = t;
-            owner.resourceManager.GetResource(ref resource);
+            Console.WriteLine(resource);
+            try
+            {
+                owner.resourceManager.GetResource(ref resource);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         layout = new Layout(owner.Options.viewport, cssDocument);
-        foreach (var obj in layout.MakeRenderObjects(
-                     document.DocumentNode.SelectSingleNode("//body"), null)
-                 )
-        {
-            Console.WriteLine(obj);
-        }
+        // foreach (var obj in layout.MakeRenderObjects(
+        //              document.DocumentNode.SelectSingleNode("//body"), null)
+        //          )
+        // {
+        //     Console.WriteLine(obj);
+        // }
+        Paint.paint(layout.MakeRenderObjects(document.DocumentNode.SelectSingleNode("//body"), null));
 
     }
     

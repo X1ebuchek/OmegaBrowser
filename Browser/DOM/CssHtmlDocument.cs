@@ -1,6 +1,7 @@
 using System.Collections;
 using Browser.CSS;
 using HtmlAgilityPack;
+using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace Browser.DOM;
 
@@ -471,6 +472,9 @@ public class CssHtmlDocument
             case "video":
                 break;
             case "wbr":
+                break;
+            default: 
+                attrMap.getMap().Add("display", "inline");
                 break;
         }
 

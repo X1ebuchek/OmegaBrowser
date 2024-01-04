@@ -2,7 +2,8 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <UseWindowsForms>true</UseWindowsForms>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
@@ -10,6 +11,10 @@
     <ItemGroup>
       <PackageReference Include="HtmlAgilityPack" Version="1.11.57" />
       <PackageReference Include="HtmlAgilityPack.CssSelectors" Version="1.0.2" />
+      <PackageReference Include="SkiaSharp" Version="2.88.6" />
+      <PackageReference Include="SkiaSharp.Views" Version="2.88.6" />
+      <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.6" />
+      <PackageReference Include="SkiaSharp.Views.Forms.WPF" Version="2.88.6" />
     </ItemGroup>
 
 
