@@ -10,10 +10,12 @@ public class Browser //todo tab manager
     public ResourceManager resourceManager { get; private set; }
     private List<Command> TabCommands; //todo command manager
     public Tab currentTab { get; private set; }
+    public BrowserOptions Options;
 
     public struct BrowserOptions
     {
         public string baseDirectory { get; init; }
+        public int viewport { get; init; }
     }
 
     public Browser(BrowserOptions options)
@@ -26,6 +28,14 @@ public class Browser //todo tab manager
         var rmPath = Path.Combine(baseDirectory, "resources");
         Directory.CreateDirectory(rmPath);
         resourceManager = new ResourceManager(rmPath);
+
+        var viewport = options.viewport > 0 ? options.viewport : 960;
+
+        Options = new BrowserOptions()
+        {
+            baseDirectory = baseDirectory,
+            viewport = viewport
+        };
         
         InitCommands();
     }

@@ -41,7 +41,8 @@ class Program
 
         var opts = new Browser.BrowserOptions
         {
-            baseDirectory = WorkingPath
+            baseDirectory = WorkingPath,
+            viewport = 960
         };
 
         var browser = new Browser(opts);

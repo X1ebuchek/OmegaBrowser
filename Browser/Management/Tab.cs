@@ -1,6 +1,7 @@
 using Browser.CSS;
 using Browser.DOM;
 using Browser.Networking;
+using Browser.Render;
 using HtmlAgilityPack;
 
 namespace Browser.Management;
@@ -10,6 +11,7 @@ public class Tab
     public string location { get; }
     public HtmlDocument document { get; }
     public CssHtmlDocument cssDocument { get; }
+    public Layout layout { get; private set; }
     public List<Resource> resources { get; set; }
     public Resource mainResource { get; }
     public Browser owner { get; }
@@ -32,7 +34,15 @@ public class Tab
             var resource = t;
             owner.resourceManager.GetResource(ref resource);
         }
-        
+
+        layout = new Layout(owner.Options.viewport, cssDocument);
+        foreach (var obj in layout.MakeRenderObjects(
+                     document.DocumentNode.SelectSingleNode("//body"), null)
+                 )
+        {
+            Console.WriteLine(obj);
+        }
+
     }
     
     public void HandleCss()
