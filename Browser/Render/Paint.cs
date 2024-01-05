@@ -18,7 +18,7 @@ public class Paint
         };
         
         var skiaPanel = new SKGLControl();
-        skiaPanel.Height = 2000;
+        skiaPanel.Height = 100000;
         skiaPanel.Width = 960;
         skiaPanel.PaintSurface += (sender, e) =>
         {
@@ -36,7 +36,7 @@ public class Paint
                     Console.WriteLine(text);
                     if (!string.IsNullOrEmpty(text))
                     {
-                       drawText(canvas, SKColors.Black, rect.left,rect.top,text,14);
+                       drawText(canvas, SKColors.Black, rect.left,rect.top,text,12);
                     }
                 }
                 else
@@ -51,7 +51,7 @@ public class Paint
         
         verticalScrollBar = new VScrollBar();
         verticalScrollBar.Dock = DockStyle.Right;
-        verticalScrollBar.Maximum = 1500; 
+        verticalScrollBar.Maximum = 100000; 
         verticalScrollBar.SmallChange = 50; 
         verticalScrollBar.LargeChange = 100;
         verticalScrollBar.Scroll += (sender, e) =>
@@ -122,7 +122,7 @@ public class Paint
                 "Arial", 
                 SKFontStyleWeight.Normal, 
                 SKFontStyleWidth.Normal, 
-                SKFontStyleSlant.Italic)
+                SKFontStyleSlant.Upright)
         };
         canvas.DrawText(text,x,y, p);
     }

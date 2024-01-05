@@ -33,14 +33,13 @@ public class Tab
         foreach (var t in resources)
         {
             var resource = t;
-            Console.WriteLine(resource);
             try
             {
                 owner.resourceManager.GetResource(ref resource);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Console.WriteLine($"Bad resource: {t}");
             }
         }
 

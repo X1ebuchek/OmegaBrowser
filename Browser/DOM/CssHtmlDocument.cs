@@ -47,10 +47,8 @@ public class CssHtmlDocument
             case "a:visited:active":
                 attrMap.getMap().Add("color", "(internal value)");
                 break;
-            case "abbr":
-                break;
             case "address":
-                attrMap.getMap().Add("display", "block;font-style");
+                attrMap.getMap().Add("display", "block");
                 break;
             case "area":
                 attrMap.getMap().Add("display", "none");
@@ -90,6 +88,7 @@ public class CssHtmlDocument
             case "br":
                 break;
             case "button":
+                attrMap.getMap().Add("display", "inline-block");
                 break;
             case "canvas":
                 break;
@@ -260,6 +259,7 @@ public class CssHtmlDocument
                 attrMap.getMap().Add("display", "inline-block");
                 break;
             case "input":
+                attrMap.getMap().Add("display", "inline-block");
                 break;
             case "ins":
                 attrMap.getMap().Add("text-decoration", "underline");
@@ -379,13 +379,10 @@ public class CssHtmlDocument
                 attrMap.getMap().Add("display", "block");
                 break;
             case "select":
+                attrMap.getMap().Add("display", "inline-block");
                 break;
             case "small":
                 attrMap.getMap().Add("font-size", "smaller");
-                break;
-            case "source":
-                break;
-            case "span":
                 break;
             case "strike":
                 attrMap.getMap().Add("text-decoration", "line-through");
@@ -425,6 +422,7 @@ public class CssHtmlDocument
             case "template":
                 break;
             case "textarea":
+                attrMap.getMap().Add("display", "inline-block");
                 break;
             case "tfoot":
                 attrMap.getMap().Add("display", "table-footer-group");
