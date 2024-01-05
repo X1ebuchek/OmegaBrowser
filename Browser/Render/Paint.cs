@@ -17,8 +17,8 @@ public class Paint
             FormBorderStyle = FormBorderStyle.FixedDialog
         };
         
-        var skiaPanel = new SKGLControl();
-        skiaPanel.Height = 100000;
+        var skiaPanel = new SKControl();
+        skiaPanel.Height = list[0].Rectangle.Height();
         skiaPanel.Width = 960;
         skiaPanel.PaintSurface += (sender, e) =>
         {
@@ -28,12 +28,12 @@ public class Paint
             
             foreach (var obj in list)
             {
-                Console.WriteLine(obj.Rectangle.left + " " + obj.Rectangle.top);
+                // Console.WriteLine(obj.Rectangle.left + " " + obj.Rectangle.top);
                 if (obj.GetType() == typeof(TextObject))
                 {
                     Rect rect = obj.Rectangle;
                     string text = ((TextObject)obj).Text.Trim();
-                    Console.WriteLine(text);
+                    // Console.WriteLine(text);
                     if (!string.IsNullOrEmpty(text))
                     {
                        drawText(canvas, SKColors.Black, rect.left,rect.top,text,12);
@@ -51,7 +51,7 @@ public class Paint
         
         verticalScrollBar = new VScrollBar();
         verticalScrollBar.Dock = DockStyle.Right;
-        verticalScrollBar.Maximum = 100000; 
+        verticalScrollBar.Maximum = list[0].Rectangle.Height() - 500; 
         verticalScrollBar.SmallChange = 50; 
         verticalScrollBar.LargeChange = 100;
         verticalScrollBar.Scroll += (sender, e) =>

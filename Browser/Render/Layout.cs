@@ -43,7 +43,7 @@ public class Layout
             case "none":
                 return list;
             
-            default:
+            case "block":
             { // todo switch image
                 var elem = MakeBlock(node, parentObject);
                 var localList = new List<RenderObject>();
@@ -86,7 +86,7 @@ public class Layout
                 break;
             }
             
-            case "inline": // inline
+            default: // inline
             {
                 var elem = MakeInline(node, parentObject, sibling);
                 var localList = new List<RenderObject>();
@@ -261,7 +261,7 @@ public class Layout
 
         if (size.Width > neededWidth)
         {
-            text = CssMath.SplitTextLines(text, neededWidth, cFont);
+            // text = CssMath.SplitTextLines(text, neededWidth, cFont);
             size = TextRenderer.MeasureText(text, cFont);
         }
             
@@ -274,7 +274,7 @@ public class Layout
             
         rect.left = parentObject.Rectangle.left + paddingLeft;
         rect.right = rect.left + size.Width - paddingRight;
-        rect.top = parentObject.Rectangle.top + paddingTop;
+        rect.top = parentObject.Rectangle.bottom + paddingTop;
         rect.bottom = rect.top + size.Height;
         
         elem.Rectangle = rect;

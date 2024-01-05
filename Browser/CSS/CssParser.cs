@@ -47,7 +47,7 @@ public class CssParser
         {
             char c;
             string key = "";
-            while ((char)sr.Peek() != '{')
+            while ((char)sr.Peek() != '{' && sr.Peek() != -1)
             {
                 c = (char)sr.Read();
                 if (c == '@')
@@ -98,6 +98,10 @@ public class CssParser
                 }
             }
 
+            if (sr.Peek() == -1)
+            {
+                return globalMap;
+            }
 
             //Console.WriteLine("key: " + key);
             c = (char)sr.Read();
@@ -182,7 +186,7 @@ public class CssParser
                 c = (char)sr.Read();
                 if (c == '}')
                 {
-                    cssAttrMap.getMap().Add(keyAttr.Trim(), valueAttr.Trim());
+                    cssAttrMap.getMap()[keyAttr.Trim()] = valueAttr.Trim();
                     goto cancelLoop;
                 }
 
