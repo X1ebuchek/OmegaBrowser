@@ -11,7 +11,7 @@ public class Layout
 {
 
     private int viewport;
-    // public static readonly Font cFont = new("Arial", 12, FontStyle.Regular, GraphicsUnit.Pixel);
+    // public static readonly Font cFont = new("Arial", 14, FontStyle.Regular, GraphicsUnit.Pixel);
     public static readonly SKPaint paint = new()
     {
         Color = SKColors.Black,
@@ -50,6 +50,12 @@ public class Layout
 
         if (node.Name == "#comment")
         {
+            return list;
+        }
+        
+        if (node.Name == "br")
+        {
+            list.Add(MakeText(node, parentObject, "\n", sibling));
             return list;
         }
         
@@ -99,10 +105,10 @@ public class Layout
                 return list;
             }
             
-            case "flex":
-            {
-                break;
-            }
+            // case "flex":
+            // {
+            //     break;
+            // }
             
             case null:
             case "inline":
@@ -124,15 +130,21 @@ public class Layout
                     {
                         foreach (var o in ll)
                         {
-                            // elem.Rectangle.bottom += o.Rectangle.Height();
+                            elem.Rectangle.bottom += o.Rectangle.Height();
                             elem.Rectangle.right += o.Rectangle.Width();
+                        }
+                    }
+                    else
+                    {
+                        if (ll.Count > 0)
+                        {
+                            elem.Rectangle.bottom += ll[0].Rectangle.Height();
+                            elem.Rectangle.right += ll[0].Rectangle.Width();
                         }
                     }
                     
                     if (ll.Count > 0)
                     {
-                        elem.Rectangle.bottom += ll[0].Rectangle.Height();
-                        elem.Rectangle.right += ll[0].Rectangle.Width();
                         ls = ll[0];
                     }
                     else
@@ -237,6 +249,9 @@ public class Layout
     {
         var parentWidth = parentObject.Rectangle.Width();
         
+        CssMath.GetMargin(document.GetMap()[node].getMap(), parentWidth, viewport, 
+            out var marginLeft, out var marginRight, out var marginTop, out var marginBottom);
+        
         CssMath.GetPadding(document.GetMap()[node.ParentNode].getMap(), parentWidth, viewport,
             out var paddingLeft, out var paddingRight, out var paddingTop, out var paddingBottom);
 
@@ -263,17 +278,17 @@ public class Layout
         
         if (sibling != null)
         {
-            rect.left = sibling.Rectangle.right + paddingLeft;
-            rect.right = rect.left + (int)size.Width + paddingRight;
-            rect.top = sibling.Rectangle.top + paddingTop;
-            rect.bottom = rect.top + (int)size.Height;
+            rect.left = sibling.Rectangle.right + paddingLeft + marginLeft;
+            rect.right = rect.left + (int)size.Width + paddingRight + marginRight;
+            rect.top = parentObject.Rectangle.top + paddingTop + marginTop;
+            rect.bottom = rect.top + (int)size.Height + paddingBottom + marginBottom;
         }
         else
         {
-            rect.left = parentObject.Rectangle.left + paddingLeft;
-            rect.right = rect.left + (int)size.Width + paddingRight;
-            rect.top = parentObject.Rectangle.bottom + paddingTop;
-            rect.bottom = rect.top + (int)size.Height;
+            rect.left = parentObject.Rectangle.left + paddingLeft + marginLeft;
+            rect.right = rect.left + (int)size.Width + paddingRight + marginRight;
+            rect.top = parentObject.Rectangle.bottom + paddingTop + marginTop;
+            rect.bottom = rect.top + (int)size.Height + paddingBottom + marginBottom;
         }
         
         elem.Rectangle = rect;

@@ -1,9 +1,11 @@
+using Topten.RichTextKit;
+
 namespace Browser.Render;
 
 using System;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
-using System.Windows.Forms;
+// using System.Windows.Forms;
 
 public class Paint
 {
@@ -18,7 +20,9 @@ public class Paint
             FormBorderStyle = FormBorderStyle.FixedDialog
         };
 
-        // textSize = TextRenderer.MeasureText("Abc", Layout.cFont).Height;
+        SKRect tsize = new();
+        Layout.paint.MeasureText("Abc", ref tsize);
+        textSize = (int)tsize.Height;
         var skiaPanel = new SKControl();
         skiaPanel.Height = list[0].Rectangle.Height();
         skiaPanel.Width = 960;
@@ -34,12 +38,8 @@ public class Paint
                 if (obj.GetType() == typeof(TextObject))
                 {
                     Rect rect = obj.Rectangle;
-                    string text = ((TextObject)obj).Text.Trim();
-                    // Console.WriteLine(text);
-                    if (!string.IsNullOrEmpty(text))
-                    {
-                       drawText(canvas, SKColors.Black, rect.left,rect.bottom,text,14);
-                    }
+                    string text = ((TextObject)obj).Text;
+                    drawText(canvas, SKColors.Black, rect, text, textSize);
                 }
                 // else
                 // {
@@ -117,24 +117,43 @@ public class Paint
     }
     
 
-    public static void drawText(SKCanvas canvas, SKColor color, float x, float y, string text, float textSize)
+    public static void drawText(SKCanvas canvas, SKColor color, Rect rect, string text, float textSize)
     {
-        SKPaint p = new()
-        {
-            Color = color,
-            TextSize = textSize,
-            Typeface = SKTypeface.FromFamilyName(
-                "Arial", 
-                SKFontStyleWeight.Normal, 
-                SKFontStyleWidth.Normal, 
-                SKFontStyleSlant.Upright)
-        };
+        text = text.Replace("&nbsp;", " ")
+            .Replace("&gt;", ">")
+            .Replace("&lt;", "<");
+        
+        var p = Layout.paint;
+
+
+        // var rs = new RichString()
+        //     .Alignment(TextAlignment.Center)
+        //     .FontFamily("Arial")
+        //     // .MarginBottom(1).MarginLeft(1).MarginTop(1).MarginRight(1)
+        //     .Add(text, fontSize: textSize, fontWeight: 400, fontItalic: false);
+        //
+        // rs.Paint(canvas, new SKPoint(rect.left, rect.top));
+        // rs.MaxWidth = rect.Width();
+        // rs.MaxHeight = rect.Height();
 
         var k = 0;
-
         foreach (var s in text.Split("\n"))
         {
-            canvas.DrawText(s,x,y+ k*textSize, p);
+            var d = s;
+            for (int i = 0; i < d.Length; i++)
+            {
+                if (char.IsWhiteSpace(d[i]))
+                {
+                    d = d.Replace(d[i].ToString(), " ");
+                }
+            }
+        
+            while (d.Contains("  "))
+            {
+                d = d.Replace("  ", " ");
+            }
+            
+            canvas.DrawText(d.Trim(),rect.left,rect.bottom+ k*textSize, p);
             k++;
         }
 

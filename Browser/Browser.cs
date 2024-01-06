@@ -60,37 +60,37 @@ public class Browser //todo tab manager
 
         currentTab = LoadTab(url);
         
-        Console.WriteLine("What should I do? I can:");
-        foreach (var command in TabCommands)
-        {
-            Console.WriteLine($"- {command.name}");
-        }
-
-        string userInput;
-        do
-        {
-            Console.Write(">>> ");
-            userInput = Console.ReadLine();
-            
-            var commands = TabCommands.Where(command => command.name.Equals(userInput));
-            var enumerable = commands as Command[] ?? commands.ToArray();
-            if (!enumerable.Any())
-            {
-                Console.WriteLine("Unknown command. I can:");
-                foreach (var command in TabCommands)
-                {
-                    Console.WriteLine($"- {command.name}");
-                }
-            }
-            else
-            {
-                foreach (var command in enumerable)
-                {
-                    command.Execute();
-                    break;
-                }
-            }
-        } while (!string.Equals(userInput, "quit", StringComparison.Ordinal));
+        // Console.WriteLine("What should I do? I can:");
+        // foreach (var command in TabCommands)
+        // {
+        //     Console.WriteLine($"- {command.name}");
+        // }
+        //
+        // string userInput;
+        // do
+        // {
+        //     Console.Write(">>> ");
+        //     userInput = Console.ReadLine();
+        //     
+        //     var commands = TabCommands.Where(command => command.name.Equals(userInput));
+        //     var enumerable = commands as Command[] ?? commands.ToArray();
+        //     if (!enumerable.Any())
+        //     {
+        //         Console.WriteLine("Unknown command. I can:");
+        //         foreach (var command in TabCommands)
+        //         {
+        //             Console.WriteLine($"- {command.name}");
+        //         }
+        //     }
+        //     else
+        //     {
+        //         foreach (var command in enumerable)
+        //         {
+        //             command.Execute();
+        //             break;
+        //         }
+        //     }
+        // } while (!string.Equals(userInput, "quit", StringComparison.Ordinal));
         
         Console.WriteLine("Shutdown...");
 

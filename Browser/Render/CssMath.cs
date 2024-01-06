@@ -18,7 +18,7 @@ public class CssMath
         {
             var c = text[counter];
             paint.MeasureText(cacheString + c, ref size);
-            if (size.Width > width)
+            if (size.Width > width) //TextRenderer.MeasureText(text, font)
             {
                 outString += "\n";
                 cacheString = c.ToString();
@@ -29,7 +29,6 @@ public class CssMath
             }
 
             outString += c;
-            
             counter++;
         }
 
