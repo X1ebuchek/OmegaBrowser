@@ -20,10 +20,18 @@ public class Rect
     }
 }
 
+public enum RenderObjectType {
+    Block,
+    Inline,
+    Flex,
+    InlineBlock
+}
+
 public class RenderObject // todo image object
 {
     public Rect Rectangle { get; set; }
     public CSSAttrMap Map { get; set; }
+    public RenderObjectType ObjectType { get; set; }
 }
 
 public class TextObject : RenderObject

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 public class Paint
 {
     private static VScrollBar verticalScrollBar;
+    private static int textSize = 14;
     public static void paint(List<RenderObject> list)
     {
         var form = new Form
@@ -16,7 +17,8 @@ public class Paint
             Text = "OmegaBrowser",
             FormBorderStyle = FormBorderStyle.FixedDialog
         };
-        
+
+        // textSize = TextRenderer.MeasureText("Abc", Layout.cFont).Height;
         var skiaPanel = new SKControl();
         skiaPanel.Height = list[0].Rectangle.Height();
         skiaPanel.Width = 960;
@@ -36,14 +38,17 @@ public class Paint
                     // Console.WriteLine(text);
                     if (!string.IsNullOrEmpty(text))
                     {
-                       drawText(canvas, SKColors.Black, rect.left,rect.top,text,12);
+                       drawText(canvas, SKColors.Black, rect.left,rect.bottom,text,14);
                     }
                 }
-                else
-                {
-                    // Rect rect = obj.Rectangle;
-                    // drawDefaultRect();
-                }
+                // else
+                // {
+                //     Rect rect = obj.Rectangle;
+                //     var r = new Random();
+                //     int A = r.Next(1000, 5000);
+                //     string hexValue1 = A.ToString("X");
+                //     drawDefaultRect(canvas, SKColor.Parse("#" + hexValue1), rect.left, rect.top, rect.Width(), rect.Height());
+                // }
             }
             
             
@@ -51,7 +56,7 @@ public class Paint
         
         verticalScrollBar = new VScrollBar();
         verticalScrollBar.Dock = DockStyle.Right;
-        verticalScrollBar.Maximum = list[0].Rectangle.Height() - 500; 
+        verticalScrollBar.Maximum = list[0].Rectangle.Height() - 400;
         verticalScrollBar.SmallChange = 50; 
         verticalScrollBar.LargeChange = 100;
         verticalScrollBar.Scroll += (sender, e) =>
@@ -124,7 +129,15 @@ public class Paint
                 SKFontStyleWidth.Normal, 
                 SKFontStyleSlant.Upright)
         };
-        canvas.DrawText(text,x,y, p);
+
+        var k = 0;
+
+        foreach (var s in text.Split("\n"))
+        {
+            canvas.DrawText(s,x,y+ k*textSize, p);
+            k++;
+        }
+
     }
 
     public static void drawImage(SKCanvas canvas, float x, float y, string path)

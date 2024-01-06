@@ -1,33 +1,39 @@
-﻿namespace Browser.Render;
+﻿using SkiaSharp;
+
+namespace Browser.Render;
 
 public class CssMath
 {
 
-    public static string SplitTextLines(string text, int width, Font font)
+    public static string SplitTextLines(string text, int width, SKPaint paint)
     {
-        var outstring = "";
-        var s = "";
+        var outString = "";
+        var cacheString = "";
 
+        SKRect size = new();
+        paint.MeasureText(text, ref size);
+        
         var counter = 0;
         while (counter < text.Length)
         {
-            var s1 = s + text[counter];
-            if (TextRenderer.MeasureText(s1, font).Width > width)
+            var c = text[counter];
+            paint.MeasureText(cacheString + c, ref size);
+            if (size.Width > width)
             {
-                outstring += "\n";
-                s = text[counter].ToString();
+                outString += "\n";
+                cacheString = c.ToString();
             }
             else
             {
-                s += text[counter];
+                cacheString += c;
             }
 
-            outstring += text[counter];
+            outString += c;
             
             counter++;
         }
 
-        return outstring;
+        return outString;
     }
     
     public static int ParseValue(string text, int viewport)

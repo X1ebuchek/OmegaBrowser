@@ -65,9 +65,14 @@ class Program
         // allNodes.FindFirst("div").AppendChild(HtmlNode.CreateNode("<img src='test.jpg' />"));
         //
         // Util.RecursiveHtmlNodePrint(doc.DocumentNode);
-        CssParser.ParseFile(
-            @"C:\Users\vagae\RiderProjects\OmegaBrowser\Browser\bin\Debug\net7.0\resources\se.ifmo.ru__6gu2AbGMyNUXYmwDWFt_Q78EK5ZRFXbBLhA-YyPtfGs"
-        );
+        // CssParser.ParseFile(
+        //     @"C:\Users\vagae\RiderProjects\OmegaBrowser\Browser\bin\Debug\net7.0\resources\se.ifmo.ru__6gu2AbGMyNUXYmwDWFt_Q78EK5ZRFXbBLhA-YyPtfGs"
+        // );
+
+        var cFont = new Font("Arial", 12, FontStyle.Regular, GraphicsUnit.Pixel);
+        Console.WriteLine(TextRenderer.MeasureText("text text", cFont));
+        Console.WriteLine(TextRenderer.MeasureText("text\ntext", cFont));
+
     }
 
     [Obsolete]
