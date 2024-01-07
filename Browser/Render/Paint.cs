@@ -38,14 +38,48 @@ public class Paint
                     string text = ((TextObject)obj).Text;
                     drawText(canvas, SKColors.Black, rect, text, textSize);
                 }
-                // else
-                // {
-                //     Rect rect = obj.Rectangle;
-                //     var r = new Random();
-                //     int A = r.Next(1000, 5000);
-                //     string hexValue1 = A.ToString("X");
-                //     drawDefaultRect(canvas, SKColor.Parse("#" + hexValue1), rect.left, rect.top, rect.Width(), rect.Height());
-                // }
+                else
+                {
+                    Rect rect = obj.Rectangle;
+                    obj.Map.getMap().TryGetValue("background-color", out var backColor);
+                    obj.Map.getMap().TryGetValue("Color", out var color);
+                    
+                    var r = new Random();
+                    int A = r.Next(1000, 5000);
+                    string hexValue1 = A.ToString("X");
+
+                    if (!string.IsNullOrEmpty(backColor))
+                    {
+                        try
+                        {
+                            SKColor sColor = SKColor.Parse(backColor.ToUpper());
+                            drawDefaultRect(canvas, sColor,rect.left, rect.top, rect.Width(), rect.Height());
+                        }
+                        catch (Exception exception)
+                        {
+                            Console.WriteLine(exception);
+                        }
+                        
+                        //Console.WriteLine(backColor + " " + SKColor.Parse(backColor));
+                    }
+                    else if (!string.IsNullOrEmpty(color))
+                    {
+                        try
+                        {
+                            drawDefaultRect(canvas, SKColor.Parse(color.ToUpper()),rect.left, rect.top, rect.Width(), rect.Height());
+                        }
+                        catch (Exception exception)
+                        {
+                            Console.WriteLine(exception);
+                        }
+                    }
+                    else
+                    {
+                        drawDefaultRect(canvas, new SKColor(0,0,0,0),rect.left, rect.top, rect.Width(), rect.Height());
+                        Console.WriteLine(hexValue1);
+                    }
+                    
+                }
             }
             
             
