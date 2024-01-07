@@ -5,7 +5,7 @@ namespace Browser.Render;
 public class CssMath
 {
 
-    public static string SplitTextLines(string text, int width, SKPaint paint)
+    public static string SplitTextLines(string text, int width, SKPaint paint, bool firstTimeStop = false)
     {
         var outString = "";
         var cacheString = "";
@@ -20,7 +20,11 @@ public class CssMath
             paint.MeasureText(cacheString + c, ref size);
             if (size.Width > width) //TextRenderer.MeasureText(text, font)
             {
-                outString += " \n";
+                if (firstTimeStop)
+                {
+                    return outString;
+                }
+                outString += "\n";
                 cacheString = c.ToString();
             }
             else

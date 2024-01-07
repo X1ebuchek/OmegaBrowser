@@ -38,7 +38,12 @@ public class Layout
             text = text.Replace("&nbsp;", " ")
                 .Replace("&gt;", ">")
                 .Replace("&lt;", "<")
+                .Replace("&mdash;", "—")
                 .Replace("&aring;", "å")
+                .Replace("&copy;", "\u00a9")
+                .Replace("&reg;", "\u00ae")
+                .Replace("&#8220;", "“")
+                .Replace("&#8221;", "”")
                 .Replace("&Ccedil;", "Ç");
 
             if (string.IsNullOrEmpty(text.Trim()))
