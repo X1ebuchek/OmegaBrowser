@@ -10,7 +10,7 @@ using SkiaSharp.Views.Desktop;
 public class Paint
 {
     private static VScrollBar verticalScrollBar;
-    private static int textSize = 14;
+    private static int textSize = (int)Layout.paint.TextSize;
     public static void paint(List<RenderObject> list)
     {
         var form = new Form
@@ -19,10 +19,7 @@ public class Paint
             Text = "OmegaBrowser",
             FormBorderStyle = FormBorderStyle.FixedDialog
         };
-
-        SKRect tsize = new();
-        Layout.paint.MeasureText("Abc", ref tsize);
-        textSize = (int)tsize.Height;
+        
         var skiaPanel = new SKControl();
         skiaPanel.Height = list[0].Rectangle.Height();
         skiaPanel.Width = 960;
@@ -119,44 +116,8 @@ public class Paint
 
     public static void drawText(SKCanvas canvas, SKColor color, Rect rect, string text, float textSize)
     {
-        text = text.Replace("&nbsp;", " ")
-            .Replace("&gt;", ">")
-            .Replace("&lt;", "<");
-        
         var p = Layout.paint;
-
-
-        // var rs = new RichString()
-        //     .Alignment(TextAlignment.Center)
-        //     .FontFamily("Arial")
-        //     // .MarginBottom(1).MarginLeft(1).MarginTop(1).MarginRight(1)
-        //     .Add(text, fontSize: textSize, fontWeight: 400, fontItalic: false);
-        //
-        // rs.Paint(canvas, new SKPoint(rect.left, rect.top));
-        // rs.MaxWidth = rect.Width();
-        // rs.MaxHeight = rect.Height();
-
-        var k = 0;
-        foreach (var s in text.Split("\n"))
-        {
-            var d = s;
-            for (int i = 0; i < d.Length; i++)
-            {
-                if (char.IsWhiteSpace(d[i]))
-                {
-                    d = d.Replace(d[i].ToString(), " ");
-                }
-            }
-        
-            while (d.Contains("  "))
-            {
-                d = d.Replace("  ", " ");
-            }
-            
-            canvas.DrawText(d.Trim(),rect.left,rect.bottom+ k*textSize, p);
-            k++;
-        }
-
+        canvas.DrawText(text,rect.left,rect.bottom, p);
     }
 
     public static void drawImage(SKCanvas canvas, float x, float y, string path)

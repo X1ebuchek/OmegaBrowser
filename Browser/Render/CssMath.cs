@@ -20,7 +20,7 @@ public class CssMath
             paint.MeasureText(cacheString + c, ref size);
             if (size.Width > width) //TextRenderer.MeasureText(text, font)
             {
-                outString += "\n";
+                outString += " \n";
                 cacheString = c.ToString();
             }
             else

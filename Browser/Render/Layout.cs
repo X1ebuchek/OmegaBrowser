@@ -15,12 +15,9 @@ public class Layout
     public static readonly SKPaint paint = new()
     {
         Color = SKColors.Black,
-        TextSize = 14,
-        Typeface = SKTypeface.FromFamilyName(
-            "Arial", 
-            SKFontStyleWeight.Normal, 
-            SKFontStyleWidth.Normal, 
-            SKFontStyleSlant.Upright)
+        TextSize = 16,
+        IsAntialias = true,
+        Typeface = SKTypeface.FromFamilyName("Times New Roman")
     };
     public CssHtmlDocument document { get; set; }
 
@@ -33,18 +30,38 @@ public class Layout
 
     public List<RenderObject> MakeRenderObjects(HtmlNode node, RenderObject parentObject, RenderObject? sibling = null)
     {
-        var list = new List<RenderObject>();
+        var list = new System.Collections.Generic.List<RenderObject>();
 
         if (node.Name == "#text")
         {
-            var t = node.InnerText.Trim();
+            var text = node.InnerText;
+            text = text.Replace("&nbsp;", " ")
+                .Replace("&gt;", ">")
+                .Replace("&lt;", "<")
+                .Replace("&aring;", "å")
+                .Replace("&Ccedil;", "Ç");
 
-            if (string.IsNullOrEmpty(t))
+            if (string.IsNullOrEmpty(text.Trim()))
             {
                 return list;
             }
             
-            list.Add(MakeText(node, parentObject, t, sibling));
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (char.IsWhiteSpace(text[i]))
+                {
+                    text = text.Replace(text[i].ToString(), " ");
+                }
+            }
+        
+            while (text.Contains("  "))
+            {
+                text = text.Replace("  ", " ");
+            }
+
+            var elem = MakeText(node, parentObject, text, sibling);
+            list.AddRange(elem);
+            
             return list;
         }
 
@@ -55,7 +72,7 @@ public class Layout
         
         if (node.Name == "br")
         {
-            list.Add(MakeText(node, parentObject, "\n", sibling));
+            list.AddRange(MakeText(node, parentObject, "\n", sibling));
             return list;
         }
         
@@ -84,13 +101,29 @@ public class Layout
                     {
                         foreach (var o in ll)
                         {
-                            elem.Rectangle.bottom += o.Rectangle.Height();
+                            if (o.Rectangle.bottom > elem.Rectangle.bottom)
+                            {
+                                elem.Rectangle.bottom = o.Rectangle.bottom;
+                            }
+
+                            if (o.Rectangle.right > elem.Rectangle.right)
+                            {
+                                elem.Rectangle.right = o.Rectangle.right;
+                            }
+                            
+                            
+                        }
+                    }
+                    else
+                    {
+                        if (ll.Count > 0)
+                        {
+                            elem.Rectangle.bottom += ll[0].Rectangle.Height();
                         }
                     }
                     
                     if (ll.Count > 0)
                     {
-                        elem.Rectangle.bottom += ll[0].Rectangle.Height();
                         ls = ll[0];
                     }
                     else
@@ -112,7 +145,7 @@ public class Layout
             
             case null:
             case "inline":
-            default: // inline
+             // inline
             {
                 var elem = MakeInline(node, parentObject, sibling);
                 var localList = new List<RenderObject>();
@@ -130,8 +163,17 @@ public class Layout
                     {
                         foreach (var o in ll)
                         {
-                            elem.Rectangle.bottom += o.Rectangle.Height();
-                            elem.Rectangle.right += o.Rectangle.Width();
+                            if (o.Rectangle.bottom > elem.Rectangle.bottom)
+                            {
+                                elem.Rectangle.bottom = o.Rectangle.bottom;
+                            }
+
+                            if (o.Rectangle.right > elem.Rectangle.right)
+                            {
+                                elem.Rectangle.right = o.Rectangle.right;
+                            }
+                            
+                            
                         }
                     }
                     else
@@ -245,9 +287,10 @@ public class Layout
         return elem;
     }
 
-    private TextObject MakeText(HtmlNode node, RenderObject parentObject, string text, RenderObject? sibling=null)
+    private List<TextObject> MakeText(HtmlNode node, RenderObject parentObject, string text, RenderObject? sibling=null)
     {
         var parentWidth = parentObject.Rectangle.Width();
+        var fontHeight = 16;
         
         CssMath.GetMargin(document.GetMap()[node].getMap(), parentWidth, viewport, 
             out var marginLeft, out var marginRight, out var marginTop, out var marginBottom);
@@ -266,36 +309,64 @@ public class Layout
             text = CssMath.SplitTextLines(text, neededWidth, paint);
             // size = TextRenderer.MeasureText(text, cFont);
             paint.MeasureText(text, ref size);
-        }
-            
-        var elem = new TextObject(text)
-        {
-            Map = document.GetMap()[node],
-            ObjectType = RenderObjectType.Inline
-        };
 
-        var rect = new Rect();
-        
-        if (sibling != null)
-        {
-            rect.left = sibling.Rectangle.right + paddingLeft + marginLeft;
-            rect.right = rect.left + (int)size.Width + paddingRight + marginRight;
-            rect.top = parentObject.Rectangle.top + paddingTop + marginTop;
-            rect.bottom = rect.top + (int)size.Height + paddingBottom + marginBottom;
+            var list = new List<TextObject>();
+            
+            foreach (var lText in text.Split("\n"))
+            {
+                var elem = new TextObject(lText)
+                {
+                    Map = document.GetMap()[node],
+                    ObjectType = RenderObjectType.Inline
+                };
+                
+                var rect = new Rect();
+
+                var dopLength = 4 * (text.Length - text.Trim().Length);
+                
+                rect.left = parentObject.Rectangle.left + paddingLeft + marginLeft;
+                rect.right = rect.left + (int)size.Width + paddingRight + marginRight + dopLength;
+                rect.top = (sibling ?? parentObject).Rectangle.bottom + paddingTop + marginTop;
+                rect.bottom = rect.top + fontHeight + paddingBottom + marginBottom;
+                
+                elem.Rectangle = rect;
+                list.Add(elem);
+                sibling = elem;
+            }
+
+            return list;
+
         }
         else
         {
-            rect.left = parentObject.Rectangle.left + paddingLeft + marginLeft;
-            rect.right = rect.left + (int)size.Width + paddingRight + marginRight;
-            rect.top = parentObject.Rectangle.bottom + paddingTop + marginTop;
-            rect.bottom = rect.top + (int)size.Height + paddingBottom + marginBottom;
+            var elem = new TextObject(text)
+            {
+                Map = document.GetMap()[node],
+                ObjectType = RenderObjectType.Inline
+            };
+
+            var rect = new Rect();
+            
+            var dopLength = 4 * (text.Length - text.Trim().Length);
+        
+            if (sibling != null)
+            {
+                rect.left = sibling.Rectangle.right + paddingLeft + marginLeft;
+                rect.right = rect.left + (int)size.Width + paddingRight + marginRight + dopLength;
+                rect.top = parentObject.Rectangle.top + paddingTop + marginTop;
+                rect.bottom = rect.top + fontHeight + paddingBottom + marginBottom;
+            }
+            else
+            {
+                rect.left = parentObject.Rectangle.left + paddingLeft + marginLeft;
+                rect.right = rect.left + (int)size.Width + paddingRight + marginRight + dopLength;
+                rect.top = parentObject.Rectangle.bottom + paddingTop + marginTop;
+                rect.bottom = rect.top + fontHeight + paddingBottom + marginBottom;
+            }
+        
+            elem.Rectangle = rect;
+            return [elem];
         }
-        
-        elem.Rectangle = rect;
-        return elem;
-        // }
-        
-        
         
     }
 
