@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Browser.CSS;
 using Browser.DOM;
 using Browser.Networking;
@@ -121,6 +122,35 @@ public class Tab
                         foreach (var attrKvp in kvp.Value.getMap())
                         {
                             cssDocument.GetMap()[selectedNode].getMap()[attrKvp.Key] = attrKvp.Value;
+                            if (attrKvp.Key == "background-image")
+                            {
+                                Console.WriteLine(attrKvp.Value);
+                                string pattern = @"url\(([^)]+)\)";
+
+                                Regex regex = new Regex(pattern);
+                                Match match = regex.Match(attrKvp.Value);
+
+                                if (match.Success)
+                                {
+                                    string url = match.Groups[1].Value;
+                                    Resource res = new Resource(url, Resource.ResourceType.Img);
+                                    
+                                    Console.WriteLine("Extracted URL: " + url);
+                                    
+                                    try
+                                    {
+                                        owner.resourceManager.GetResource(ref res);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine($"Bad resource: {url}");
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("URL not found in the input text.");
+                                }
+                            }
                         }
                     }
                 }
