@@ -47,12 +47,18 @@ public class CssMath
             return 0;
         }
 
+        if (text.StartsWith("."))
+        {
+            text = "0" + text;
+        }
+
         var symbols = text[^2..];
 
         return symbols switch
         {
             "px" => int.Parse(text[..^2]),
             "vw" => viewport / 100 * int.Parse(text[..^2]),
+            "em" => (int)(16 * float.Parse(text[..^2].Replace(".", ","))),
             _ => 0
         };
     }

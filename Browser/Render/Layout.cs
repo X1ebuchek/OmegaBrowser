@@ -138,6 +138,16 @@ public class Layout
                     
                 }
             
+                var parentWidth = parentObject == null ? 0 : parentObject.Rectangle.Width();
+        
+                // todo parent margin-top, ...
+                CssMath.GetMargin(elem.Map.getMap(), parentWidth, viewport, 
+                    out var marginLeft, out var marginRight, out var marginTop, out var marginBottom);
+                
+                CssMath.GetPadding(document.GetMap()[node.ParentNode].getMap(), parentWidth, viewport,
+                    out var paddingLeft, out var paddingRight, out var paddingTop, out var paddingBottom);
+
+                elem.Rectangle.bottom += marginBottom + paddingBottom;
                 list.Add(elem);
                 list.AddRange(localList);
                 return list;
