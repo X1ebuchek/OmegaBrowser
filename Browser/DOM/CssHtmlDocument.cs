@@ -34,8 +34,8 @@ public class CssHtmlDocument
             case "#text":
                 // attrMap.getMap().Add("margin", "2px");
                 break;
-            case "a:link":
-                attrMap.getMap().Add("color", "(internal value)");
+            case "a":
+                attrMap.getMap().Add("color", "#0000EE");
                 attrMap.getMap().Add("text-decoration", "underline");
                 attrMap.getMap().Add("cursor", "auto");
                 break;

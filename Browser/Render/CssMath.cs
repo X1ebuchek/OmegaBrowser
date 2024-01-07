@@ -42,7 +42,7 @@ public class CssMath
     public static int ParseValue(string text, int viewport)
     {
 
-        if (text.Equals("0"))
+        if (text.Equals("0") || text.EndsWith("rem"))
         {
             return 0;
         }
