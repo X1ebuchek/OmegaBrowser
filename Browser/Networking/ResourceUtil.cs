@@ -89,6 +89,7 @@ public class ResourceUtil
             foreach (var resource in res)
             {
                 resource.host = host;
+                resource.pagePath = location;
                 result.Add(resource);
             }
 

@@ -8,6 +8,7 @@ public class Resource
     }
     public string host { get; set; }
     public string path { get; set; }
+    public string pagePath { get; set; }
     public string? localPath { get; set; }
     public ResourceType type { get; init; }
 
@@ -19,6 +20,6 @@ public class Resource
 
     public override string ToString()
     {
-        return $"{type}, {path}" + (string.IsNullOrEmpty(localPath) ? "" : $", {localPath}");
+        return $"{type}, {path}" + (string.IsNullOrEmpty(localPath) ? ", not downloaded" : $", {localPath}");
     }
 }

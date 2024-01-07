@@ -40,13 +40,36 @@ public class ResourceManager
     public bool GetResource(ref Resource resource)
     {
         Uri myUri;
-        if (resource.path.StartsWith("/"))
+        
+        if (resource.path.StartsWith("//")) // abspath without protocol
         {
-            myUri = new Uri(resource.host + resource.path);
+            myUri = new Uri("https:" + resource.path);
         }
         else
         {
-            myUri = new Uri(resource.path);
+            if (resource.path.StartsWith("/")) // relative path with starting /
+            {
+                myUri = new Uri(resource.host + resource.path);
+            }
+            else
+            {
+                if (resource.path.Contains("://")) // abspath
+                {
+                    myUri = new Uri(resource.path);
+                }
+                else // relative path without starting /
+                {
+                    if (resource.pagePath.EndsWith("/"))
+                    {
+                        myUri = new Uri(resource.pagePath + resource.path);
+                    }
+                    else
+                    {
+                        myUri = new Uri(resource.pagePath + "/" + resource.path);
+                    }
+                }
+                
+            }
         }
 
         var host = myUri.Host;
