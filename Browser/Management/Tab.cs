@@ -173,6 +173,35 @@ public class Tab
                 foreach (var kvp in map.getMap())
                 {
                     cssDocument.GetMap()[node].getMap()[kvp.Key] = kvp.Value;
+                    if (kvp.Key == "background-image")
+                    {
+                        Console.WriteLine(kvp.Value);
+                        string pattern = @"url\(([^)]+)\)";
+
+                        Regex regex = new Regex(pattern);
+                        Match match = regex.Match(kvp.Value);
+
+                        if (match.Success)
+                        {
+                            string url = match.Groups[1].Value;
+                            Resource res = new Resource(url, Resource.ResourceType.Img);
+                                    
+                            Console.WriteLine("Extracted URL: " + url);
+                                    
+                            try
+                            {
+                                owner.resourceManager.GetResource(ref res);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine($"Bad resource: {url}");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("URL not found in the input text.");
+                        }
+                    }
                 }
             }
             
