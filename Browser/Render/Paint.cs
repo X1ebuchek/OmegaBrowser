@@ -1,3 +1,4 @@
+using Browser.Management;
 using Topten.RichTextKit;
 
 namespace Browser.Render;
@@ -11,7 +12,7 @@ public class Paint
 {
     private static VScrollBar verticalScrollBar;
     private static int textSize = (int)Layout.paint.TextSize;
-    public static void paint(List<RenderObject> list)
+    public static void paint(Tab tab, List<RenderObject> list)
     {
         var form = new Form
         {

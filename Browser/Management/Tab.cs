@@ -53,7 +53,7 @@ public class Tab
         // {
         //     Console.WriteLine(obj);
         // }
-        Paint.paint(layout.MakeRenderObjects(document.DocumentNode.SelectSingleNode("//body"), null));
+        Paint.paint(this, layout.MakeRenderObjects(document.DocumentNode.SelectSingleNode("//body"), null));
 
     }
     
