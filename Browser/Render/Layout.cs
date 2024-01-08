@@ -1,4 +1,6 @@
 using Browser.DOM;
+using Browser.Management;
+using Browser.Networking;
 using HtmlAgilityPack;
 using SkiaSharp;
 
@@ -16,12 +18,15 @@ public class Layout
         Typeface = SKTypeface.FromFamilyName("Times New Roman")
     };
     public CssHtmlDocument document { get; set; }
+    public Tab tab { get; set; }
 
 
-    public Layout(int viewport, CssHtmlDocument document)
+
+    public Layout(int viewport, CssHtmlDocument document, Tab tab)
     {
         this.viewport = viewport;
         this.document = document;
+        this.tab = tab;
     }
 
     public List<RenderObject> MakeRenderObjects(HtmlNode node, RenderObject parentObject, RenderObject? sibling = null)
@@ -107,6 +112,29 @@ public class Layout
         {
             list.AddRange(MakeText(node, parentObject, "\n", sibling));
             return list;
+        }
+
+        if (node.Name == "img")
+        {
+            Console.WriteLine("qqqqqqqqqqqqqqqqqqqqqqq");
+
+            try
+            {
+                var elem = MakeImage(node, node.Attributes["src"].Value, parentObject);
+                list.Add(elem);
+                return list;
+            }
+            catch (Exception)
+            {
+                if (node.Attributes.Contains("alt"))
+                {
+                    list.AddRange(MakeText(node, parentObject, node.Attributes["alt"].Value, sibling));
+                    return list;
+                }
+            }
+            
+                
+            
         }
         
         document.GetMap()[node].getMap().TryGetValue("display", out var displayType);
@@ -316,7 +344,7 @@ public class Layout
         {
             rect.left = 0 + marginLeft + paddingLeft;
             rect.right = viewport - marginRight - paddingRight;
-            rect.top = 0 + marginTop + marginTop;
+            rect.top = 0 + marginTop + paddingTop;
         }
         else
         {
@@ -408,6 +436,55 @@ public class Layout
             return [elem];
         }
         
+    }
+    
+    private ImageObject MakeImage(HtmlNode node, string path, RenderObject parentObject)
+    {
+        var fileName = tab.resources.First(x => path.Equals(x.path)).localPath;
+        var imageHeight = 0;
+        var imageWidth = 0;
+        if (fileName != null)
+        {
+            Console.WriteLine(fileName);
+            System.Drawing.Image img = System.Drawing.Image.FromFile(fileName);
+            imageHeight = img.Height;
+            imageWidth = img.Width;
+        }
+        
+        var elem = new ImageObject(fileName)
+        {
+            Map = document.GetMap()[node],
+            ObjectType = RenderObjectType.Block,
+            LocalPath = fileName
+        };
+
+        var rect = new Rect();
+        var parentWidth = parentObject == null ? 0 : parentObject.Rectangle.Width();
+        
+        // todo parent margin-top, ...
+        CssMath.GetMargin(elem.Map.getMap(), parentWidth, viewport, 
+            out var marginLeft, out var marginRight, out var marginTop, out var marginBottom);
+        
+        CssMath.GetPadding(document.GetMap()[node.ParentNode].getMap(), parentWidth, viewport,
+            out var paddingLeft, out var paddingRight, out var paddingTop, out var paddingBottom);
+
+        if (parentObject == null)
+        {
+            rect.left = 0 + marginLeft + paddingLeft;
+            rect.right = viewport - marginRight - paddingRight;
+            rect.top = 0 + marginTop + paddingTop;
+            rect.bottom = rect.top + imageHeight + marginBottom + paddingBottom;
+        }
+        else
+        {
+            rect.left = parentObject.Rectangle.left + marginLeft + paddingLeft;
+            rect.right = rect.left + imageWidth + marginRight + paddingRight;
+            rect.top = parentObject.Rectangle.bottom + marginTop + paddingTop;
+            rect.bottom = rect.top + imageHeight + marginBottom + paddingBottom;
+        }
+
+        elem.Rectangle = rect;
+        return elem;
     }
 
 }

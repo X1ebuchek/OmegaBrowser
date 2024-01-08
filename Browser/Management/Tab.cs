@@ -46,7 +46,7 @@ public class Tab
 
         HandleCss();
         
-        layout = new Layout(owner.Options.viewport, cssDocument);
+        layout = new Layout(owner.Options.viewport, cssDocument, this);
         // foreach (var obj in layout.MakeRenderObjects(
         //              document.DocumentNode.SelectSingleNode("//body"), null)
         //          )

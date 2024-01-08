@@ -43,3 +43,13 @@ public class TextObject : RenderObject
         Text = text;
     }
 }
+
+public class ImageObject : RenderObject
+{
+    public string LocalPath { get; set; }
+
+    public ImageObject(string localPath)
+    {
+        LocalPath = localPath;
+    }
+}

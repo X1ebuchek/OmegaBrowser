@@ -100,6 +100,21 @@ public class Paint
                 drawText(canvas, sColor, rect, text, textSize, under);
                     
             }
+            else if (obj.GetType() == typeof(ImageObject))
+            {
+                Console.WriteLine("lolololoollollollplloolooloooolo");
+                Rect rect = obj.Rectangle;
+                //Resource res = new Resource(((ImageObject)obj).LocalPath, Resource.ResourceType.Img);
+                try
+                {
+                    //tab.owner.resourceManager.GetResource(ref res);
+                    if (((ImageObject)obj).LocalPath != null) drawImage(canvas, rect.left, rect.top, ((ImageObject)obj).LocalPath);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine($"Bad resource: {((ImageObject)obj).LocalPath}");
+                }
+            }
             else
             {
                 Rect rect = obj.Rectangle;
