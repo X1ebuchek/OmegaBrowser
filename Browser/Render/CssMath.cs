@@ -69,125 +69,130 @@ public class CssMath
         marginLeft = marginRight = marginTop = marginBottom = 0;
         
         map.TryGetValue("margin", out var margin);
-        if (string.IsNullOrEmpty(margin)) return;
-        var marginArray = margin.Split(" ");
-
-        switch (marginArray.Length)
+        if (!string.IsNullOrEmpty(margin))
         {
-            case 1:
-                var value = marginArray[0];
-                if (!value.EndsWith("%"))
-                {
-                    marginLeft = marginRight = marginTop = marginBottom = ParseValue(value, viewport);
-                }
-                else
-                {
-                    marginLeft = marginRight = marginTop = marginBottom = parentWidth / 100 * int.Parse(value[..^1]);
-                }
-                break;
+            var marginArray = margin.Split(" ");
 
-            case 2:
-                var value1 = marginArray[0];
-                var value2 = marginArray[1];
-                    
-                if (!value1.EndsWith("%"))
-                {
-                    marginTop = marginBottom = ParseValue(value1, viewport);
-                }
-                else
-                {
-                    marginTop = marginBottom = parentWidth / 100 * int.Parse(value1[..^1]);
-                }
-                    
-                if (!value2.EndsWith("%"))
-                {
-                    marginLeft = marginRight = ParseValue(value2, viewport);
-                }
-                else
-                {
-                    marginLeft = marginRight = parentWidth / 100 * int.Parse(value2[..^1]);
-                }
-                    
-                break;
-            case 3:
-                var value_1 = marginArray[0];
-                var value_2 = marginArray[1];
-                var value_3 = marginArray[2];
-                    
-                if (!value_1.EndsWith("%"))
-                {
-                    marginTop = ParseValue(value_1, viewport);
-                }
-                else
-                {
-                    marginTop = parentWidth / 100 * int.Parse(value_1[..^1]);
-                }
-                    
-                if (!value_2.EndsWith("%"))
-                {
-                    marginLeft = marginRight = ParseValue(value_2, viewport);
-                }
-                else
-                {
-                    marginLeft = marginRight = parentWidth / 100 * int.Parse(value_2[..^1]);
-                }
-                    
-                if (!value_3.EndsWith("%"))
-                {
-                    marginBottom = ParseValue(value_3, viewport);
-                }
-                else
-                {
-                    marginBottom = parentWidth / 100 * int.Parse(value_3[..^1]);
-                }
-                break;
-            case 4:
-                var value_11 = marginArray[0];
-                var value_12 = marginArray[1];
-                var value_13 = marginArray[2];
-                var value_14 = marginArray[3];
-                    
-                if (!value_11.EndsWith("%"))
-                {
-                    marginTop = ParseValue(value_11, viewport);
-                }
-                else
-                {
-                    marginTop = parentWidth / 100 * int.Parse(value_11[..^1]);
-                }
-                    
-                if (!value_12.EndsWith("%"))
-                {
-                    marginRight = ParseValue(value_12, viewport);
-                }
-                else
-                {
-                    marginRight = parentWidth / 100 * int.Parse(value_12[..^1]);
-                }
-                    
-                if (!value_13.EndsWith("%"))
-                {
-                    marginBottom = ParseValue(value_13, viewport);
-                }
-                else
-                {
-                    marginBottom = parentWidth / 100 * int.Parse(value_13[..^1]);
-                }
-                    
-                if (!value_14.EndsWith("%"))
-                {
-                    marginLeft = ParseValue(value_14, viewport);
-                }
-                else
-                {
-                    marginLeft = parentWidth / 100 * int.Parse(value_14[..^1]);
-                }
-                    
-                break;
-            default:
-                break;
+            switch (marginArray.Length)
+            {
+                case 1:
+                    var value = marginArray[0];
+                    if (!value.EndsWith("%"))
+                    {
+                        marginLeft = marginRight = marginTop = marginBottom = ParseValue(value, viewport);
+                    }
+                    else
+                    {
+                        marginLeft = marginRight =
+                            marginTop = marginBottom = parentWidth / 100 * int.Parse(value[..^1]);
+                    }
+
+                    break;
+
+                case 2:
+                    var value1 = marginArray[0];
+                    var value2 = marginArray[1];
+
+                    if (!value1.EndsWith("%"))
+                    {
+                        marginTop = marginBottom = ParseValue(value1, viewport);
+                    }
+                    else
+                    {
+                        marginTop = marginBottom = parentWidth / 100 * int.Parse(value1[..^1]);
+                    }
+
+                    if (!value2.EndsWith("%"))
+                    {
+                        marginLeft = marginRight = ParseValue(value2, viewport);
+                    }
+                    else
+                    {
+                        marginLeft = marginRight = parentWidth / 100 * int.Parse(value2[..^1]);
+                    }
+
+                    break;
+                case 3:
+                    var value_1 = marginArray[0];
+                    var value_2 = marginArray[1];
+                    var value_3 = marginArray[2];
+
+                    if (!value_1.EndsWith("%"))
+                    {
+                        marginTop = ParseValue(value_1, viewport);
+                    }
+                    else
+                    {
+                        marginTop = parentWidth / 100 * int.Parse(value_1[..^1]);
+                    }
+
+                    if (!value_2.EndsWith("%"))
+                    {
+                        marginLeft = marginRight = ParseValue(value_2, viewport);
+                    }
+                    else
+                    {
+                        marginLeft = marginRight = parentWidth / 100 * int.Parse(value_2[..^1]);
+                    }
+
+                    if (!value_3.EndsWith("%"))
+                    {
+                        marginBottom = ParseValue(value_3, viewport);
+                    }
+                    else
+                    {
+                        marginBottom = parentWidth / 100 * int.Parse(value_3[..^1]);
+                    }
+
+                    break;
+                case 4:
+                    var value_11 = marginArray[0];
+                    var value_12 = marginArray[1];
+                    var value_13 = marginArray[2];
+                    var value_14 = marginArray[3];
+
+                    if (!value_11.EndsWith("%"))
+                    {
+                        marginTop = ParseValue(value_11, viewport);
+                    }
+                    else
+                    {
+                        marginTop = parentWidth / 100 * int.Parse(value_11[..^1]);
+                    }
+
+                    if (!value_12.EndsWith("%"))
+                    {
+                        marginRight = ParseValue(value_12, viewport);
+                    }
+                    else
+                    {
+                        marginRight = parentWidth / 100 * int.Parse(value_12[..^1]);
+                    }
+
+                    if (!value_13.EndsWith("%"))
+                    {
+                        marginBottom = ParseValue(value_13, viewport);
+                    }
+                    else
+                    {
+                        marginBottom = parentWidth / 100 * int.Parse(value_13[..^1]);
+                    }
+
+                    if (!value_14.EndsWith("%"))
+                    {
+                        marginLeft = ParseValue(value_14, viewport);
+                    }
+                    else
+                    {
+                        marginLeft = parentWidth / 100 * int.Parse(value_14[..^1]);
+                    }
+
+                    break;
+                default:
+                    break;
+            }
         }
-        
+
         map.TryGetValue("margin-right", out var margin_right);
         if (!string.IsNullOrEmpty(margin_right))
         {

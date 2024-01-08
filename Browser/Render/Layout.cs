@@ -120,7 +120,7 @@ public class Layout
 
             try
             {
-                var elem = MakeImage(node, node.Attributes["src"].Value, parentObject);
+                var elem = MakeImage(node, node.Attributes["src"].Value, parentObject, sibling);
                 list.Add(elem);
                 return list;
             }
@@ -132,7 +132,6 @@ public class Layout
                     return list;
                 }
             }
-            
                 
             
         }
@@ -147,7 +146,7 @@ public class Layout
             case "list-item":
             case "block":
             { // todo switch image
-                var elem = MakeBlock(node, parentObject);
+                var elem = MakeBlock(node, parentObject, sibling);
                 var localList = new List<RenderObject>();
                 elem.Rectangle.bottom = elem.Rectangle.top;
 
@@ -179,17 +178,13 @@ public class Layout
                     {
                         if (ll.Count > 0)
                         {
-                            elem.Rectangle.bottom += ll[0].Rectangle.Height();
+                            elem.Rectangle.bottom = ll[^1].Rectangle.bottom;
                         }
                     }
                     
                     if (ll.Count > 0)
                     {
                         ls = ll[0];
-                    }
-                    else
-                    {
-                        ls = null;
                     }
                     
                 }
@@ -259,10 +254,6 @@ public class Layout
                     {
                         ls = ll[0];
                     }
-                    else
-                    {
-                        ls = null;
-                    }
                     
                 }
             
@@ -322,7 +313,7 @@ public class Layout
         return elem;
     }
 
-    private RenderObject MakeBlock(HtmlNode node, RenderObject parentObject)
+    private RenderObject MakeBlock(HtmlNode node, RenderObject parentObject, RenderObject? sibling)
     {
         var elem = new RenderObject
         {
@@ -348,9 +339,19 @@ public class Layout
         }
         else
         {
-            rect.left = parentObject.Rectangle.left + marginLeft + paddingLeft;
-            rect.right = parentObject.Rectangle.right - marginRight - paddingRight;
-            rect.top = parentObject.Rectangle.bottom + marginTop + paddingTop;
+            
+            if (sibling != null)
+            {
+                rect.left = parentObject.Rectangle.left + marginLeft + paddingLeft;
+                rect.right = parentObject.Rectangle.right - marginRight - paddingRight;
+                rect.top = sibling.Rectangle.bottom + marginTop;
+            }
+            else
+            {
+                rect.left = parentObject.Rectangle.left + marginLeft + paddingLeft;
+                rect.right = parentObject.Rectangle.right - marginRight - paddingRight;
+                rect.top = parentObject.Rectangle.top + marginTop + paddingTop;
+            }
         }
 
         elem.Rectangle = rect;
@@ -438,7 +439,7 @@ public class Layout
         
     }
     
-    private ImageObject MakeImage(HtmlNode node, string path, RenderObject parentObject)
+    private ImageObject MakeImage(HtmlNode node, string path, RenderObject parentObject, RenderObject? sibling)
     {
         var fileName = tab.resources.First(x => path.Equals(x.path)).localPath;
         var imageHeight = 0;
@@ -446,7 +447,7 @@ public class Layout
         if (fileName != null)
         {
             Console.WriteLine(fileName);
-            System.Drawing.Image img = System.Drawing.Image.FromFile(fileName);
+            var img = Image.FromFile(fileName);
             imageHeight = img.Height;
             imageWidth = img.Width;
         }
@@ -477,10 +478,21 @@ public class Layout
         }
         else
         {
-            rect.left = parentObject.Rectangle.left + marginLeft + paddingLeft;
-            rect.right = rect.left + imageWidth + marginRight + paddingRight;
-            rect.top = parentObject.Rectangle.bottom + marginTop + paddingTop;
-            rect.bottom = rect.top + imageHeight + marginBottom + paddingBottom;
+            if (sibling != null)
+            {
+                rect.left = parentObject.Rectangle.left + marginLeft + paddingLeft;
+                rect.right = rect.left + imageWidth + marginRight + paddingRight;
+                rect.top = sibling.Rectangle.bottom + marginTop + paddingTop;
+                rect.bottom = rect.top + imageHeight + marginBottom + paddingBottom;
+            }
+            else
+            {
+                rect.left = parentObject.Rectangle.left + marginLeft + paddingLeft;
+                rect.right = rect.left + imageWidth + marginRight + paddingRight;
+                rect.top = parentObject.Rectangle.top + marginTop + paddingTop;
+                rect.bottom = rect.top + imageHeight + marginBottom + paddingBottom;
+            }
+            
         }
 
         elem.Rectangle = rect;
