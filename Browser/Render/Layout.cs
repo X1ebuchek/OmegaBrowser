@@ -116,8 +116,6 @@ public class Layout
 
         if (node.Name == "img")
         {
-            Console.WriteLine("qqqqqqqqqqqqqqqqqqqqqqq");
-
             try
             {
                 var elem = MakeImage(node, node.Attributes["src"].Value, parentObject, sibling);
@@ -446,7 +444,6 @@ public class Layout
         var imageWidth = 0;
         if (fileName != null)
         {
-            Console.WriteLine(fileName);
             var img = Image.FromFile(fileName);
             imageHeight = img.Height;
             imageWidth = img.Width;

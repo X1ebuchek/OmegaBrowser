@@ -77,7 +77,6 @@ public class Paint
     {
         foreach (var obj in list)
         {
-            // Console.WriteLine(obj.Rectangle.left + " " + obj.Rectangle.top);
             if (obj.GetType() == typeof(TextObject))
             {
                 Rect rect = obj.Rectangle;
@@ -102,13 +101,11 @@ public class Paint
             }
             else if (obj.GetType() == typeof(ImageObject))
             {
-                Console.WriteLine("lolololoollollollplloolooloooolo");
                 Rect rect = obj.Rectangle;
-                //Resource res = new Resource(((ImageObject)obj).LocalPath, Resource.ResourceType.Img);
                 try
                 {
-                    //tab.owner.resourceManager.GetResource(ref res);
-                    if (((ImageObject)obj).LocalPath != null) drawImage(canvas, rect.left, rect.top, ((ImageObject)obj).LocalPath);
+                    if (((ImageObject)obj).LocalPath != null) 
+                        drawImage(canvas, rect.left, rect.top, ((ImageObject)obj).LocalPath);
                 }
                 catch (Exception)
                 {
@@ -119,12 +116,7 @@ public class Paint
             {
                 Rect rect = obj.Rectangle;
                 obj.Map.getMap().TryGetValue("background-color", out var backColor);
-                    
                 obj.Map.getMap().TryGetValue("background-image", out var backImg);
-                    
-                var r = new Random();
-                int A = r.Next(1000, 5000);
-                string hexValue1 = A.ToString("X");
 
                 string pattern = @"url\(([^)]+)\)";
 
@@ -137,8 +129,6 @@ public class Paint
                     {
                         string url = match.Groups[1].Value;
                         Resource res = new Resource(url, Resource.ResourceType.Img);
-                                    
-                        //Console.WriteLine("Extracted URL: " + url);
                             
                         try
                         {
@@ -163,13 +153,10 @@ public class Paint
                     {
                         Console.WriteLine(exception);
                     }
-                        
-                    //Console.WriteLine(backColor + " " + SKColor.Parse(backColor));
                 }
                 else
                 {
                     drawDefaultRect(canvas, new SKColor(0,0,0,0),rect.left, rect.top, rect.Width(), rect.Height());
-                    Console.WriteLine(hexValue1);
                 }
                     
             }

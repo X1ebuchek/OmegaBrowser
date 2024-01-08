@@ -15,7 +15,6 @@
       <PackageReference Include="SkiaSharp.Views" Version="2.88.6" />
       <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.6" />
       <PackageReference Include="SkiaSharp.Views.Forms.WPF" Version="2.88.6" />
-      <PackageReference Include="Topten.RichTextKit" Version="0.4.166" />
     </ItemGroup>
 
 

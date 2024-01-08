@@ -121,7 +121,6 @@ public class Tab
                             cssDocument.GetMap()[selectedNode].getMap()[attrKvp.Key.ToLower()] = attrKvp.Value;
                             if (attrKvp.Key.ToLower() == "background-image")
                             {
-                                Console.WriteLine(attrKvp.Value);
                                 string pattern = @"url\(([^)]+)\)";
 
                                 Regex regex = new Regex(pattern);
@@ -131,8 +130,6 @@ public class Tab
                                 {
                                     string url = match.Groups[1].Value;
                                     Resource res = new Resource(url, Resource.ResourceType.Img);
-                                    
-                                    Console.WriteLine("Extracted URL: " + url);
                                     
                                     try
                                     {
@@ -172,7 +169,6 @@ public class Tab
                     cssDocument.GetMap()[node].getMap()[kvp.Key.ToLower()] = kvp.Value;
                     if (kvp.Key.ToLower() == "background-image")
                     {
-                        Console.WriteLine(kvp.Value);
                         string pattern = @"url\(([^)]+)\)";
 
                         Regex regex = new Regex(pattern);
@@ -182,8 +178,6 @@ public class Tab
                         {
                             string url = match.Groups[1].Value;
                             Resource res = new Resource(url, Resource.ResourceType.Img);
-                                    
-                            Console.WriteLine("Extracted URL: " + url);
                                     
                             try
                             {
