@@ -95,13 +95,10 @@ public class Tab
                 
                 foreach (var kvp in map.getMap())
                 {
-                    var preprocessed = kvp.Key.Split(",");
-                    for (int i = 0; i < preprocessed.Length; i++)
-                    {
-                        preprocessed[i] = preprocessed[i].Split(":")[0].Replace("\n", " ");
-                    }
-
-                    var selector = string.Join(",", preprocessed);
+                    var preprocessed = kvp.Key.ToLower().Split(",");
+                    var filtered = preprocessed.Where(rule => !rule.Contains(':')).ToList();
+                    if (filtered.Count == 0) continue;
+                    var selector = string.Join(",", filtered);
                     IList<HtmlNode> selectedNodes;
                     try
                     {
@@ -121,8 +118,8 @@ public class Tab
                     {
                         foreach (var attrKvp in kvp.Value.getMap())
                         {
-                            cssDocument.GetMap()[selectedNode].getMap()[attrKvp.Key] = attrKvp.Value;
-                            if (attrKvp.Key == "background-image")
+                            cssDocument.GetMap()[selectedNode].getMap()[attrKvp.Key.ToLower()] = attrKvp.Value;
+                            if (attrKvp.Key.ToLower() == "background-image")
                             {
                                 Console.WriteLine(attrKvp.Value);
                                 string pattern = @"url\(([^)]+)\)";
@@ -172,8 +169,8 @@ public class Tab
 
                 foreach (var kvp in map.getMap())
                 {
-                    cssDocument.GetMap()[node].getMap()[kvp.Key] = kvp.Value;
-                    if (kvp.Key == "background-image")
+                    cssDocument.GetMap()[node].getMap()[kvp.Key.ToLower()] = kvp.Value;
+                    if (kvp.Key.ToLower() == "background-image")
                     {
                         Console.WriteLine(kvp.Value);
                         string pattern = @"url\(([^)]+)\)";

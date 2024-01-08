@@ -30,9 +30,6 @@ public class CssHtmlDocument
 
         switch (tagName)
         {
-            case "#text":
-                // attrMap.getMap().Add("margin", "2px");
-                break;
             case "a":
                 attrMap.getMap().Add("color", "#0000EE");
                 attrMap.getMap().Add("text-decoration", "underline");

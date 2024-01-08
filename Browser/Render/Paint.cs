@@ -13,12 +13,14 @@ public class Paint
 
     private static SKBitmap bufferBitmap;
     private static SKCanvas bufferCanvas;
+
+    private static readonly Size browserSize = new(980, 500);
     
     public static void paint(Tab tab, List<RenderObject> list)
     {
         var form = new Form
         {
-            ClientSize = new System.Drawing.Size(980, 500),
+            ClientSize = browserSize,
             Text = "OmegaBrowser",
             FormBorderStyle = FormBorderStyle.FixedDialog,
             MaximizeBox = false
@@ -26,7 +28,7 @@ public class Paint
         
         var skiaPanel = new SKControl();
         skiaPanel.Height = list[0].Rectangle.Height();
-        skiaPanel.Width = 960;
+        skiaPanel.Width = browserSize.Width - 20;
         skiaPanel.PaintSurface += (sender, e) =>
         {
             var surface = e.Surface;
@@ -35,36 +37,33 @@ public class Paint
             if (bufferBitmap == null)
             {
                 // Инициализируем буферный холст и его канвас
-                bufferBitmap = new SKBitmap(960, list[0].Rectangle.Height());
+                bufferBitmap = new SKBitmap(skiaPanel.Width, skiaPanel.Height);
                 bufferCanvas = new SKCanvas(bufferBitmap);
                 // Отрисовываем все объекты на буфере
                 DrawAllObjects(tab, bufferCanvas, list);
             }
 
             // Определяем видимую область
-            var visibleRect = new SKRectI(0, -verticalScrollBar.Value, skiaPanel.Width, skiaPanel.Height);
+            var visibleRect = new SKRectI(0, verticalScrollBar.Value, 
+                skiaPanel.Width, browserSize.Height+verticalScrollBar.Value);
+            
+            var defaultRect = new SKRectI(0, 0, 
+                skiaPanel.Width, browserSize.Height);
     
             // Отображаем только видимую область из буфера
-            canvas.DrawBitmap(bufferBitmap, visibleRect, visibleRect, null);
-            
-            // skiaPanel.Resize += (sender, e) =>
-            // {
-            //     // При изменении размера окна пересоздаем буфер и перерисовываем все объекты
-            //     bufferBitmap = new SKBitmap(skiaPanel.Width, skiaPanel.Height);
-            //     bufferCanvas = new SKCanvas(bufferBitmap);
-            //     DrawAllObjects(tab, bufferCanvas, list);
-            // };
+            canvas.DrawBitmap(bufferBitmap, visibleRect, defaultRect);
             
         };
         
         verticalScrollBar = new VScrollBar();
         verticalScrollBar.Dock = DockStyle.Right;
-        verticalScrollBar.Maximum = list[0].Rectangle.Height() - 400;
+        verticalScrollBar.Width = 20;
+        verticalScrollBar.Maximum = list[0].Rectangle.Height() - (browserSize.Height - 100);
         verticalScrollBar.SmallChange = 50; 
         verticalScrollBar.LargeChange = 100;
         verticalScrollBar.Scroll += (sender, e) =>
         {
-            skiaPanel.Top = -verticalScrollBar.Value;
+            skiaPanel.Invalidate();
         };
         
         form.Controls.Add(skiaPanel);
@@ -77,92 +76,92 @@ public class Paint
     private static void DrawAllObjects(Tab tab, SKCanvas canvas, List<RenderObject> list)
     {
         foreach (var obj in list)
+        {
+            // Console.WriteLine(obj.Rectangle.left + " " + obj.Rectangle.top);
+            if (obj.GetType() == typeof(TextObject))
             {
-                // Console.WriteLine(obj.Rectangle.left + " " + obj.Rectangle.top);
-                if (obj.GetType() == typeof(TextObject))
+                Rect rect = obj.Rectangle;
+                string text = ((TextObject)obj).Text;
+                    
+                obj.Map.getMap().TryGetValue("text-decoration", out var underline);
+                var under = !string.IsNullOrEmpty(underline) && underline.Equals("underline");
+                    
+                SKColor sColor;
+                obj.Map.getMap().TryGetValue("color", out var color);
+                try
                 {
-                    Rect rect = obj.Rectangle;
-                    string text = ((TextObject)obj).Text;
+                    sColor = SKColor.Parse(color.ToUpper());
+                }
+                catch (Exception e)
+                {
+                    sColor = SKColors.Black;
+                }
+
+                drawText(canvas, sColor, rect, text, textSize, under);
                     
-                    obj.Map.getMap().TryGetValue("text-decoration", out var underline);
-                    var under = !string.IsNullOrEmpty(underline) && underline.Equals("underline");
+            }
+            else
+            {
+                Rect rect = obj.Rectangle;
+                obj.Map.getMap().TryGetValue("background-color", out var backColor);
                     
-                    SKColor sColor;
-                    obj.Map.getMap().TryGetValue("color", out var color);
+                obj.Map.getMap().TryGetValue("background-image", out var backImg);
+                    
+                var r = new Random();
+                int A = r.Next(1000, 5000);
+                string hexValue1 = A.ToString("X");
+
+                string pattern = @"url\(([^)]+)\)";
+
+                Regex regex = new Regex(pattern);
+                if (backImg != null)
+                {
+                    Match match = regex.Match(backImg);
+
+                    if (match.Success)
+                    {
+                        string url = match.Groups[1].Value;
+                        Resource res = new Resource(url, Resource.ResourceType.Img);
+                                    
+                        //Console.WriteLine("Extracted URL: " + url);
+                            
+                        try
+                        {
+                            tab.owner.resourceManager.GetResource(ref res);
+                            if (res.localPath != null) drawImage(canvas, rect.left, rect.top, res.localPath);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine($"Bad resource: {url}");
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(backColor))
+                {
                     try
                     {
-                        sColor = SKColor.Parse(color.ToUpper());
+                        SKColor sColor = SKColor.Parse(backColor.ToUpper());
+                        drawDefaultRect(canvas, sColor,rect.left, rect.top, rect.Width(), rect.Height());
                     }
-                    catch (Exception e)
+                    catch (Exception exception)
                     {
-                        sColor = SKColors.Black;
+                        Console.WriteLine(exception);
                     }
-
-                    drawText(canvas, sColor, rect, text, textSize, under);
-                    
+                        
+                    //Console.WriteLine(backColor + " " + SKColor.Parse(backColor));
                 }
                 else
                 {
-                    Rect rect = obj.Rectangle;
-                    obj.Map.getMap().TryGetValue("background-color", out var backColor);
-                    
-                    obj.Map.getMap().TryGetValue("background-image", out var backImg);
-                    
-                    var r = new Random();
-                    int A = r.Next(1000, 5000);
-                    string hexValue1 = A.ToString("X");
-
-                    string pattern = @"url\(([^)]+)\)";
-
-                    Regex regex = new Regex(pattern);
-                    if (backImg != null)
-                    {
-                        Match match = regex.Match(backImg);
-
-                        if (match.Success)
-                        {
-                            string url = match.Groups[1].Value;
-                            Resource res = new Resource(url, Resource.ResourceType.Img);
-                                    
-                            //Console.WriteLine("Extracted URL: " + url);
-                            
-                            try
-                            {
-                                tab.owner.resourceManager.GetResource(ref res);
-                                if (res.localPath != null) drawImage(canvas, rect.left, rect.top, res.localPath);
-                            }
-                            catch (Exception)
-                            {
-                                Console.WriteLine($"Bad resource: {url}");
-                            }
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(backColor))
-                    {
-                        try
-                        {
-                            SKColor sColor = SKColor.Parse(backColor.ToUpper());
-                            drawDefaultRect(canvas, sColor,rect.left, rect.top, rect.Width(), rect.Height());
-                        }
-                        catch (Exception exception)
-                        {
-                            Console.WriteLine(exception);
-                        }
-                        
-                        //Console.WriteLine(backColor + " " + SKColor.Parse(backColor));
-                    }
-                    else
-                    {
-                        drawDefaultRect(canvas, new SKColor(0,0,0,0),rect.left, rect.top, rect.Width(), rect.Height());
-                        Console.WriteLine(hexValue1);
-                    }
-                    
+                    drawDefaultRect(canvas, new SKColor(0,0,0,0),rect.left, rect.top, rect.Width(), rect.Height());
+                    Console.WriteLine(hexValue1);
                 }
+                    
             }
-    } 
+        }
+    }
     
-     public static void drawDefaultRect(SKCanvas canvas, SKColor color, float x, float y, float w, float h)
+    public static void drawDefaultRect(SKCanvas canvas, SKColor color, float x, float y, float w, float h)
     {
         SKPaint p = new() { Color = color };
         canvas.DrawRect(x, y, w, h, p);

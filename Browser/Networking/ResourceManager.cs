@@ -65,7 +65,18 @@ public class ResourceManager
                     }
                     else
                     {
-                        myUri = new Uri(resource.pagePath + "/" + resource.path);
+                        var count = resource.pagePath.Count((c) => c == '/');
+                        if (count == 2) // only host
+                        {
+                            myUri = new Uri(resource.pagePath + "/" + resource.path);
+                        }
+                        else
+                        {
+                            var c = resource.pagePath.Split("/")[^1];
+                            var d = resource.pagePath.Remove(resource.pagePath.Length - c.Length);
+                            myUri = new Uri(d + resource.path);
+                        }
+                        
                     }
                 }
                 
