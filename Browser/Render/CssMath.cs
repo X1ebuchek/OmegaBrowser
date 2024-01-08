@@ -187,6 +187,58 @@ public class CssMath
             default:
                 break;
         }
+        
+        map.TryGetValue("margin-right", out var margin_right);
+        if (!string.IsNullOrEmpty(margin_right))
+        {
+            if (!margin_right.EndsWith("%"))
+            {
+                marginRight = ParseValue(margin_right, viewport);
+            }
+            else
+            {
+                marginRight = parentWidth / 100 * int.Parse(margin_right[..^1]);
+            }
+        }
+        
+        map.TryGetValue("margin-top", out var margin_top);
+        if (!string.IsNullOrEmpty(margin_top))
+        {
+            if (!margin_top.EndsWith("%"))
+            {
+                marginTop = ParseValue(margin_top, viewport);
+            }
+            else
+            {
+                marginTop = parentWidth / 100 * int.Parse(margin_top[..^1]);
+            }
+        }
+        
+        map.TryGetValue("margin-left", out var margin_left);
+        if (!string.IsNullOrEmpty(margin_left))
+        {
+            if (!margin_left.EndsWith("%"))
+            {
+                marginLeft = ParseValue(margin_left, viewport);
+            }
+            else
+            {
+                marginLeft = parentWidth / 100 * int.Parse(margin_left[..^1]);
+            }
+        }
+        
+        map.TryGetValue("margin-bottom", out var margin_bottom);
+        if (!string.IsNullOrEmpty(margin_bottom))
+        {
+            if (!margin_bottom.EndsWith("%"))
+            {
+                marginBottom = ParseValue(margin_bottom, viewport);
+            }
+            else
+            {
+                marginBottom = parentWidth / 100 * int.Parse(margin_bottom[..^1]);
+            }
+        }
     }
 
     

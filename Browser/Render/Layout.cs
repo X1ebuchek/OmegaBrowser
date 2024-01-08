@@ -1,8 +1,5 @@
-using System.Drawing;
 using Browser.DOM;
-using Browser.Management;
 using HtmlAgilityPack;
-using System.Drawing.Text;
 using SkiaSharp;
 
 namespace Browser.Render;
@@ -11,7 +8,6 @@ public class Layout
 {
 
     private int viewport;
-    // public static readonly Font cFont = new("Arial", 14, FontStyle.Regular, GraphicsUnit.Pixel);
     public static readonly SKPaint paint = new()
     {
         Color = SKColors.Black,
@@ -30,7 +26,7 @@ public class Layout
 
     public List<RenderObject> MakeRenderObjects(HtmlNode node, RenderObject parentObject, RenderObject? sibling = null)
     {
-        var list = new System.Collections.Generic.List<RenderObject>();
+        var list = new List<RenderObject>();
 
         if (node.Name == "#text")
         {
@@ -66,6 +62,38 @@ public class Layout
 
             var elem = MakeText(node, parentObject, text, sibling);
             list.AddRange(elem);
+
+            var pLink = node.ParentNode;
+            while (pLink != null && pLink.Name != "html")
+            {
+                document.GetMap()[pLink].getMap().TryGetValue("color", out var color);
+                if (!string.IsNullOrEmpty(color))
+                {
+                    foreach (var textObject in elem)
+                    {
+                        textObject.Map.getMap()["color"] = color;
+                    }
+                    break;
+                }
+
+                pLink = pLink.ParentNode;
+            }
+            
+            pLink = node.ParentNode;
+            while (pLink != null && pLink.Name != "html")
+            {
+                document.GetMap()[pLink].getMap().TryGetValue("text-decoration", out var textDecor);
+                if (!string.IsNullOrEmpty(textDecor))
+                {
+                    foreach (var textObject in elem)
+                    {
+                        textObject.Map.getMap()["text-decoration"] = textDecor;
+                    }
+                    break;
+                }
+
+                pLink = pLink.ParentNode;
+            }
             
             return list;
         }
@@ -160,7 +188,6 @@ public class Layout
             
             case null:
             case "inline":
-             // inline
             {
                 var elem = MakeInline(node, parentObject, sibling);
                 var localList = new List<RenderObject>();
@@ -314,7 +341,6 @@ public class Layout
             out var paddingLeft, out var paddingRight, out var paddingTop, out var paddingBottom);
 
         var neededWidth = parentWidth - paddingLeft - paddingRight;
-        // var size = TextRenderer.MeasureText(text, cFont);
         
         SKRect size = new();
         paint.MeasureText(text, ref size);
@@ -322,7 +348,6 @@ public class Layout
         if (size.Width > neededWidth && parentObject.Rectangle.Width() > 0)
         {
             text = CssMath.SplitTextLines(text, neededWidth, paint);
-            // size = TextRenderer.MeasureText(text, cFont);
             paint.MeasureText(text, ref size);
 
             var list = new List<TextObject>();

@@ -1,4 +1,3 @@
-using System.Collections;
 using Browser.CSS;
 using HtmlAgilityPack;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
@@ -259,7 +258,7 @@ public class CssHtmlDocument
                 attrMap.getMap().Add("display", "block");
                 break;
             case "img":
-                attrMap.getMap().Add("display", "inline-block");
+                attrMap.getMap().Add("display", "block");
                 break;
             case "input":
                 attrMap.getMap().Add("display", "inline-block");

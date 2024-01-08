@@ -1,20 +1,16 @@
 using System.Text.RegularExpressions;
 using Browser.Management;
 using Browser.Networking;
-using Topten.RichTextKit;
-
-namespace Browser.Render;
-
-using System;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
-// using System.Windows.Forms;
+
+namespace Browser.Render;
 
 public class Paint
 {
     private static VScrollBar verticalScrollBar;
     private static int textSize = (int)Layout.paint.TextSize;
-    
+
     private static SKBitmap bufferBitmap;
     private static SKCanvas bufferCanvas;
     
@@ -87,22 +83,29 @@ public class Paint
                 {
                     Rect rect = obj.Rectangle;
                     string text = ((TextObject)obj).Text;
-                    obj.Map.getMap().TryGetValue("text-decoration", out var underlined);
-                    if (!string.IsNullOrEmpty(underlined) && underlined.Equals("underlined"))
+                    
+                    obj.Map.getMap().TryGetValue("text-decoration", out var underline);
+                    var under = !string.IsNullOrEmpty(underline) && underline.Equals("underline");
+                    
+                    SKColor sColor;
+                    obj.Map.getMap().TryGetValue("color", out var color);
+                    try
                     {
-                        drawText(canvas, SKColors.Black, rect, text, textSize, true);
+                        sColor = SKColor.Parse(color.ToUpper());
                     }
-                    else
+                    catch (Exception e)
                     {
-                        drawText(canvas, SKColors.Black, rect, text, textSize, false);
+                        sColor = SKColors.Black;
                     }
+
+                    drawText(canvas, sColor, rect, text, textSize, under);
                     
                 }
                 else
                 {
                     Rect rect = obj.Rectangle;
                     obj.Map.getMap().TryGetValue("background-color", out var backColor);
-                    obj.Map.getMap().TryGetValue("Color", out var color);
+                    
                     obj.Map.getMap().TryGetValue("background-image", out var backImg);
                     
                     var r = new Random();
@@ -148,17 +151,6 @@ public class Paint
                         }
                         
                         //Console.WriteLine(backColor + " " + SKColor.Parse(backColor));
-                    }
-                    else if (!string.IsNullOrEmpty(color))
-                    {
-                        try
-                        {
-                            drawDefaultRect(canvas, SKColor.Parse(color.ToUpper()),rect.left, rect.top, rect.Width(), rect.Height());
-                        }
-                        catch (Exception exception)
-                        {
-                            Console.WriteLine(exception);
-                        }
                     }
                     else
                     {
