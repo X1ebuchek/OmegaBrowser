@@ -18,6 +18,8 @@ public class Tab
     public Resource mainResource { get; }
     public Browser owner { get; }
 
+    private ObjectRenderer _renderer;
+
     public Tab(Resource mainResource, Browser owner)
     {
         this.mainResource = mainResource;
@@ -53,7 +55,7 @@ public class Tab
         // {
         //     Console.WriteLine(obj);
         // }
-        Paint.paint(this, layout.MakeRenderObjects(document.DocumentNode.SelectSingleNode("//body"), null));
+        _renderer = new ObjectRenderer(this, layout.MakeRenderObjects(document.DocumentNode.SelectSingleNode("//body"), null));
 
     }
     

@@ -57,10 +57,24 @@ public class CssMath
         return symbols switch
         {
             "px" => int.Parse(text[..^2]),
-            "vw" => viewport / 100 * int.Parse(text[..^2]),
+            "vw" => viewport * int.Parse(text[..^2]) / 100 ,
             "em" => (int)(16 * float.Parse(text[..^2].Replace(".", ","))),
             _ => 0
         };
+    }
+
+    public static void GetFontSize(string fs, int viewport, out int size)
+    {
+        var value = fs.Split(" ")[0];
+        if (!value.EndsWith("%"))
+        {
+           size = ParseValue(value, viewport);
+        }
+        else
+        {
+            size = 16 * int.Parse(value[..^1]) / 100;
+        }
+
     }
     
     public static void GetMargin(Dictionary<string, string> map, int parentWidth, int viewport,

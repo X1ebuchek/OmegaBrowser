@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Browser.DOM;
 using Browser.Management;
 using Browser.Networking;
@@ -10,13 +11,13 @@ public class Layout
 {
 
     private int viewport;
-    public static readonly SKPaint paint = new()
-    {
-        Color = SKColors.Black,
-        TextSize = 16,
-        IsAntialias = true,
-        Typeface = SKTypeface.FromFamilyName("Times New Roman")
-    };
+    // public static readonly SKPaint paint = new()
+    // {
+    //     Color = SKColors.Black,
+    //     TextSize = 16,
+    //     IsAntialias = true,
+    //     Typeface = SKTypeface.FromFamilyName("Times New Roman")
+    // };
     public CssHtmlDocument document { get; set; }
     public Tab tab { get; set; }
 
@@ -145,6 +146,7 @@ public class Layout
             case "block":
             { // todo switch image
                 var elem = MakeBlock(node, parentObject, sibling);
+                DoBackground(elem);
                 var localList = new List<RenderObject>();
                 elem.Rectangle.bottom = elem.Rectangle.top;
 
@@ -211,6 +213,7 @@ public class Layout
             case "inline":
             {
                 var elem = MakeInline(node, parentObject, sibling);
+                DoBackground(elem);
                 var localList = new List<RenderObject>();
                 elem.Rectangle.bottom = elem.Rectangle.top;
                 elem.Rectangle.right = elem.Rectangle.left;
@@ -265,6 +268,63 @@ public class Layout
         }
 
         return list;
+    }
+
+    private void DoBackground(RenderObject obj)
+    {
+
+        obj.BackgroundObjects = new List<RenderObjectBackground>();
+        
+        Rect rect = obj.Rectangle;
+        obj.Map.getMap().TryGetValue("background-color", out var backColor);
+        obj.Map.getMap().TryGetValue("background-image", out var backImg);
+        
+        string pattern = @"url\(([^)]+)\)";
+        
+        Regex regex = new Regex(pattern);
+        if (backImg != null)
+        {
+            Match match = regex.Match(backImg);
+        
+            if (match.Success)
+            {
+
+                
+                
+                string url = match.Groups[1].Value;
+                Resource res = new Resource(url, Resource.ResourceType.Img);
+                            
+                try
+                {
+                    tab.owner.resourceManager.GetResource(ref res);
+                    if (res.localPath != null)
+                    {
+                        obj.BackgroundObjects.Add(new RenderObjectImageBackground(res));
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine($"Bad resource: {url}");
+                }
+            }
+        }
+        
+        if (!string.IsNullOrEmpty(backColor))
+        {
+            try
+            {
+                SKColor sColor = SKColor.Parse(backColor.ToUpper());
+                obj.BackgroundObjects.Add(new RenderObjectSolidColorBackground(sColor));
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
+        }
+        else
+        {
+            obj.BackgroundObjects.Add(new RenderObjectSolidColorBackground(new SKColor(0,0,0,0)));
+        }
     }
 
     private RenderObject MakeInline(HtmlNode node, RenderObject parentObject, RenderObject? sibling)
@@ -359,7 +419,28 @@ public class Layout
     private List<TextObject> MakeText(HtmlNode node, RenderObject parentObject, string text, RenderObject? sibling=null)
     {
         var parentWidth = parentObject.Rectangle.Width();
+        
         var fontHeight = 16;
+        
+        var pLink = node.ParentNode;
+        while (pLink != null && pLink.Name != "html")
+        {
+            document.GetMap()[pLink].getMap().TryGetValue("font", out var fontSize);
+            if (!string.IsNullOrEmpty(fontSize))
+            {
+                try
+                {
+                    CssMath.GetFontSize(fontSize, viewport, out fontHeight);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+                break;
+            }
+
+            pLink = pLink.ParentNode;
+        }
         
         CssMath.GetMargin(document.GetMap()[node].getMap(), parentWidth, viewport, 
             out var marginLeft, out var marginRight, out var marginTop, out var marginBottom);
@@ -370,6 +451,13 @@ public class Layout
         var neededWidth = parentWidth - paddingLeft - paddingRight;
         
         SKRect size = new();
+        SKPaint paint = new()
+        {
+            Color = SKColors.Black,
+            TextSize = fontHeight,
+            IsAntialias = true,
+            Typeface = SKTypeface.FromFamilyName("Times New Roman")
+        };
         paint.MeasureText(text, ref size);
 
         if (size.Width > neededWidth && parentObject.Rectangle.Width() > 0)
@@ -381,7 +469,7 @@ public class Layout
             
             foreach (var lText in text.Split("\n"))
             {
-                var elem = new TextObject(lText)
+                var elem = new TextObject(lText, fontHeight)
                 {
                     Map = document.GetMap()[node],
                     ObjectType = RenderObjectType.Inline
@@ -406,7 +494,7 @@ public class Layout
         }
         else
         {
-            var elem = new TextObject(text)
+            var elem = new TextObject(text, fontHeight)
             {
                 Map = document.GetMap()[node],
                 ObjectType = RenderObjectType.Inline

@@ -53,7 +53,6 @@ class Program
     static void DoLocal()
     {
         SKRect size = new();
-        Layout.paint.MeasureText("m m", ref size);
         Console.WriteLine(size);
 
     }

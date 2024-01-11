@@ -1,6 +1,6 @@
 ﻿# Omegabrowser
 
-Актуальная версия [здесь](https://github.com/X1ebuchek/OmegaPoisk).
+Актуальная версия [здесь](https://github.com/X1ebuchek/OmegaBrowser).
 
 ## Запуск
 
